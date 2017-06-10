@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.loong.sixcode.MainActivity"
+    tools:showIn="@layout/app_bar_main">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/button1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="显示"/>
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="错误"/>
+
+        <Button
+            android:id="@+id/button3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="警告"/>
+    </LinearLayout>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="56dp"/>
+
+    <eu.long1.spacetablayout.SpaceTabLayout
+        android:id="@+id/spaceTabLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        app:number_of_tabs="four"
+        app:icon_one="@mipmap/look"
+        app:icon_two="@mipmap/buy"
+        app:icon_three="@mipmap/search"
+        app:icon_four="@mipmap/all"
+        app:text_one="haha"
+        app:text_two="hehe"
+        app:text_three="heihei"
+        app:layout_behavior="eu.long1.spacetablayout.SpaceTabLayoutBehavior"
+        app:starting_position="one"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <!--app:number_of_tabs="four"-->
+        <!--app:starting_position="two"-->
+        <!--app:tab_color="@color/colorPrimary"-->
+        <!--app:button_color="@color/colorAccent"-->
+        <!--app:text_color="#61FFFFFF"-->
+        <!--app:icon_one="@mipmap/ic_launcher"-->
+        <!--app:icon_two="@mipmap/ic_launcher"-->
+        <!--app:icon_three="@mipmap/ic_launcher"-->
+        <!--app:icon_four="@mipmap/ic_launcher"-->
+
+</RelativeLayout>
