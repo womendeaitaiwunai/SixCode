@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center">
+    <com.coorchice.library.SuperTextView
+        android:layout_marginBottom="5dp"
+        android:id="@+id/code_num"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        app:corner="25dp"
+        android:gravity="center"
+        android:textColor="#ffffff"
+        android:textSize="30sp"
+        android:text="1"
+        app:solid="#cdcddd"
+        app:state_drawable_mode="center"/>
+    <!--//设置圆角。会同时作用于填充和边框(如果边框存在的话)。-->
+    <!--//如果要设置为圆形，只需要把该值设置为宽或长的1/2即可。-->
+    <!--app:corner="25dp"-->
+    <!--//设置左上角圆角-->
+    <!--app:left_top_corner="true"-->
+    <!--//设置右上角圆角-->
+    <!--app:right_top_corner="true"-->
+    <!--//设置左下角圆角-->
+    <!--app:left_bottom_corner="true"-->
+    <!--//设置右下角圆角-->
+    <!--app:right_bottom_corner="true"-->
+    <!--//设置填充颜色-->
+    <!--app:solid="@color/red"-->
+    <!--//设置边框颜色-->
+    <!--app:stroke_color="@color/black"-->
+    <!--//设置边框的宽度。-->
+    <!--app:stroke_width="2dp"-->
+    <!--//放置一个drawable在背景层上。默认居中显示。-->
+    <!--//并且默认大小为SuperTextView的一半。-->
+    <!--app:state_drawable="@drawable/emoji"-->
+    <!--//设置drawable的显示模式。可选值如下：-->
+    <!--// left、top、right、bottom、center(默认值)、-->
+    <!--//leftTop、rightTop、leftBottom、rightBottom、-->
+    <!--//fill(充满整个SuperTextView，此时会使设置drawable的大小失效)-->
+    <!--app:state_drawable_mode="center"-->
+    <!--//设置drawable的height-->
+    <!--app:state_drawable_height="30dp"-->
+    <!--//设置drawable的width-->
+    <!--app:state_drawable_width="30dp"-->
+    <!--//设置drawble相对于基础位置左边的距离-->
+    <!--app:state_drawable_padding_left="10dp"-->
+    <!--//设置drawble相对于基础位置上边的距离-->
+    <!--app:state_drawable_padding_top="10dp"-->
+    <!--// boolean类型。是否显示drawable。-->
+    <!--//如果你想要设置的drawable显示出来，必须设置为true。-->
+    <!--//当不想让它显示时，再设置为false即可。-->
+    <!--app:isShowState="true"-->
+    <!--//是否开启文字描边功能。-->
+    <!--//注意，启用这个模式之后通过setTextColor()设置的颜色将会被覆盖。-->
+    <!--//你需要通过text_fill_color来设置文字的颜色。-->
+    <!--app:text_stroke="true"-->
+    <!--// 文字的描边颜色。默认为Color.BLACK。-->
+    <!--app:text_stroke_color="@color/black"-->
+    <!--// 文字描边的宽度。-->
+    <!--app:text_stroke_width="1dp"-->
+    <!--// 文字填充的颜色。默认为Color.BLACK。-->
+    <!--app:text_fill_color="@color/blue"-->
+    <!--// boolean类型。是否启用Adjuster功能。-->
+    <!--//具体干什么，需要在Java中为SuperTextView实现一个Adjuster。-->
+    <!--//当你启用这个功能而没有实现自己的Adjuster时，-->
+    <!--//SuperTextView会启用默认的Adjuster。它会按照一定的规则调整文字大小。-->
+
+</LinearLayout>

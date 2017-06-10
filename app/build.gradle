@@ -19,14 +19,14 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     //有趣的文字显示
     compile 'com.github.chenBingX:SuperTextView:v1.3'
     //显示所有记录卡片控件
     compile 'com.github.devlight:infinitecycleviewpager:1.0.2'
-
     //底部的view
     compile 'eu.long1:spacetablayout:1.0.4'
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.android.support:design:24.2.1'
+    compile 'com.android.support:cardview-v7:26.0.0-alpha1'
 }
