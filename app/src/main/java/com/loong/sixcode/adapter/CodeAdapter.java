@@ -13,6 +13,7 @@ import com.loong.sixcode.R;
  */
 
 public class CodeAdapter extends RecyclerView.Adapter<CodeAdapter.MViewHolder> {
+    private ItemOnClickListener itemOnClickListener;
     @Override
     public MViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_code,null);
@@ -20,8 +21,16 @@ public class CodeAdapter extends RecyclerView.Adapter<CodeAdapter.MViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(MViewHolder holder, int position) {
+    public void onBindViewHolder(MViewHolder holder, final int position) {
         holder.superTextView.setText(position+1+"");
+        holder.superTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (itemOnClickListener!=null){
+                    itemOnClickListener.onClick(position);
+                }
+            }
+        });
     }
 
     @Override
@@ -35,5 +44,13 @@ public class CodeAdapter extends RecyclerView.Adapter<CodeAdapter.MViewHolder> {
             super(itemView);
             superTextView= (SuperTextView) itemView.findViewById(R.id.code_num);
         }
+    }
+
+    public interface ItemOnClickListener{
+        void onClick(int position);
+    }
+
+    public void setItemOnClickListener(ItemOnClickListener itemOnClickListener){
+        this.itemOnClickListener=itemOnClickListener;
     }
 }

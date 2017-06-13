@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    <com.coorchice.library.SuperTextView
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="20dp"
+        android:id="@+id/code_num"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        app:corner="25dp"
+        android:gravity="center"
+        android:textColor="#ffffff"
+        android:textSize="18sp"
+        android:text="1"
+        app:solid="#cdcddd"
+        app:state_drawable_mode="center"/>
+</LinearLayout>

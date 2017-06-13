@@ -9,6 +9,15 @@ import java.util.List;
 public class BuyResultBean {
     private long time;
     private List<String> buyNum;
+    private int money;
+
+    public int getMoney() {
+        return money;
+    }
+
+    public void setMoney(int money) {
+        this.money = money;
+    }
 
     public long getTime() {
         return time;

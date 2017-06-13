@@ -24,12 +24,14 @@ import java.util.List;
 public class BuyResultAdapter extends RecyclerView.Adapter<BuyResultAdapter.MViewHolder> {
     List<BuyResultBean> buyResultBeenList=new ArrayList<>();
     private Context context;
+    private View buyView;
     public BuyResultAdapter(List<BuyResultBean> buyResultBeenList){
         this.buyResultBeenList=buyResultBeenList;
     }
     @Override
     public MViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         context=parent.getContext();
+        buyView=LayoutInflater.from(context).inflate(R.layout.layout_buy_view,null,false);
         View view= LayoutInflater.from(context).inflate(R.layout.adapter_buy_result,parent,false);
         return new MViewHolder(view);
     }
@@ -41,14 +43,11 @@ public class BuyResultAdapter extends RecyclerView.Adapter<BuyResultAdapter.MVie
         String time=sdf.format(timeData);
         holder.time.setText(time);
 
-        for (int i = 0; i < buyResultBeenList.get(position).getBuyNum().size(); i++) {
-            SuperTextView superText=new SuperTextView(context);
-            superText.setTextColor(Color.WHITE);
-            LinearLayout.LayoutParams params=new LinearLayout.LayoutParams(50,50);
-            params.setMargins(10,0,0,0);
-            superText.setLayoutParams(params);
-            holder.buyResult.addView(superText);
-        }
+//        for (int i = 0; i < buyResultBeenList.get(position).getBuyNum().size(); i++) {
+//            SuperTextView buyNum= (SuperTextView) buyView.findViewById(R.id.code_num);
+//            buyNum.setText( buyResultBeenList.get(position).getBuyNum().get(i));
+//            holder.buyResult.addView(buyNum);
+//        }
     }
 
     @Override
@@ -64,5 +63,10 @@ public class BuyResultAdapter extends RecyclerView.Adapter<BuyResultAdapter.MVie
             time= (TextView) itemView.findViewById(R.id.time);
             buyResult= (LinearLayout) itemView.findViewById(R.id.but_code);
         }
+    }
+
+    public void addItemView(BuyResultBean buyResultBean){
+        buyResultBeenList.add(buyResultBean);
+        notifyDataSetChanged();
     }
 }
