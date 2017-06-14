@@ -24,14 +24,12 @@ import java.util.List;
 public class BuyResultAdapter extends RecyclerView.Adapter<BuyResultAdapter.MViewHolder> {
     List<BuyResultBean> buyResultBeenList=new ArrayList<>();
     private Context context;
-    private View buyView;
     public BuyResultAdapter(List<BuyResultBean> buyResultBeenList){
         this.buyResultBeenList=buyResultBeenList;
     }
     @Override
     public MViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         context=parent.getContext();
-        buyView=LayoutInflater.from(context).inflate(R.layout.layout_buy_view,null,false);
         View view= LayoutInflater.from(context).inflate(R.layout.adapter_buy_result,parent,false);
         return new MViewHolder(view);
     }
@@ -39,15 +37,20 @@ public class BuyResultAdapter extends RecyclerView.Adapter<BuyResultAdapter.MVie
     @Override
     public void onBindViewHolder(MViewHolder holder, int position) {
         long timeData=buyResultBeenList.get(position).getTime();
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat sdf = new SimpleDateFormat("HH时mm分ss秒");
         String time=sdf.format(timeData);
         holder.time.setText(time);
 
-//        for (int i = 0; i < buyResultBeenList.get(position).getBuyNum().size(); i++) {
-//            SuperTextView buyNum= (SuperTextView) buyView.findViewById(R.id.code_num);
-//            buyNum.setText( buyResultBeenList.get(position).getBuyNum().get(i));
-//            holder.buyResult.addView(buyNum);
-//        }
+        BuyResultBean resultBean=buyResultBeenList.get(position);
+        holder.allMoney.setText(resultBean.getMoney()+0+"块");
+        int resultBuyNum=resultBean.getBuyNum().size();
+        holder.buyResult.removeAllViews();
+        for (int i = 0; i <resultBuyNum; i++) {
+            View buyView=LayoutInflater.from(context).inflate(R.layout.layout_buy_view,null,false);
+            SuperTextView buyNum= (SuperTextView) buyView.findViewById(R.id.code_num);
+            buyNum.setText( resultBean.getBuyNum().get(i));
+            holder.buyResult.addView(buyNum);
+        }
     }
 
     @Override
@@ -58,10 +61,12 @@ public class BuyResultAdapter extends RecyclerView.Adapter<BuyResultAdapter.MVie
     public class MViewHolder extends RecyclerView.ViewHolder{
         TextView time;
         LinearLayout buyResult;
+        TextView allMoney;
         public MViewHolder(View itemView) {
             super(itemView);
             time= (TextView) itemView.findViewById(R.id.time);
             buyResult= (LinearLayout) itemView.findViewById(R.id.but_code);
+            allMoney= (TextView) itemView.findViewById(R.id.all_money);
         }
     }
 

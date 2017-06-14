@@ -40,10 +40,23 @@
                 android:text="买码:"/>
            <LinearLayout
                android:id="@+id/but_code"
-               android:layout_width="match_parent"
+               android:layout_width="wrap_content"
                android:layout_height="wrap_content"
                android:layout_marginLeft="20dp"
                android:orientation="horizontal"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="金额:"/>
+            <TextView
+                android:id="@+id/all_money"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorAccent"
+                android:layout_marginRight="20dp"
+                android:textSize="20sp"
+                android:text="5块"/>
         </LinearLayout>
     </LinearLayout>
     <TextView
