@@ -92,14 +92,14 @@ public class BuyCodeFragment extends Fragment {
         resultRecycle.setLayoutManager(manager1);
         resultRecycle.setAdapter(buyResultAdapter);
 
-        codeAdapter.setOnItemViewClickListener(new BaseRecycleAdapter.OnItemViewClickListener() {
+        codeAdapter.setOnItemViewClickListener(new BaseRecycleAdapter.OnItemViewClickListener<Integer>() {
             @Override
-            public void itemViewClick(Object o) {
-
+            public void itemViewClick(Integer integer) {
+                if (isSingle) showSingeBuyDialog(integer);
+                else buySomeAdapter.addItemView(integer);
             }
         });
-        if (isSingle) showSingeBuyDialog(position);
-        else buySomeAdapter.addItemView(position);
+
     }
 
     private void showSingeBuyDialog(int position){

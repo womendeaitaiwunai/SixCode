@@ -16,8 +16,8 @@ import java.util.List;
  */
 
 public abstract class BaseRecycleAdapter<VH extends RecyclerView.ViewHolder,V> extends RecyclerView.Adapter<VH> {
-    private OnViewClickListener onViewClickListener;
-    private OnItemViewClickListener onItemViewClickListener;
+    private OnViewClickListener<V> onViewClickListener;
+    private OnItemViewClickListener<V> onItemViewClickListener;
     private int[] intIds;
     private Context context;
     private List<V> mineDataList=new ArrayList<>();
@@ -64,15 +64,16 @@ public abstract class BaseRecycleAdapter<VH extends RecyclerView.ViewHolder,V> e
         return getMyItemData().size();
     }
 
-    public interface OnViewClickListener{
+
+    public interface OnViewClickListener<V>{
         void viewClick(V v,int clickId);
     }
 
-    public interface OnItemViewClickListener{
+    public interface OnItemViewClickListener<V>{
         void itemViewClick(V v);
     }
 
-    public void setOnViewClickListener(OnViewClickListener onViewClickListener){
+    public void setOnViewClickListener(OnViewClickListener<V> onViewClickListener){
         this.onViewClickListener=onViewClickListener;
     }
 
@@ -80,7 +81,7 @@ public abstract class BaseRecycleAdapter<VH extends RecyclerView.ViewHolder,V> e
         this.intIds=clickIds;
     }
 
-    public void setOnItemViewClickListener(OnItemViewClickListener onItemViewClickListener){
+    public void setOnItemViewClickListener(OnItemViewClickListener<V> onItemViewClickListener){
         this.onItemViewClickListener=onItemViewClickListener;
     }
 
