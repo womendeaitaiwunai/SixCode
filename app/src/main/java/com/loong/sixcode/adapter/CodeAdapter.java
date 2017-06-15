@@ -18,20 +18,15 @@ import java.util.List;
  */
 
 public class CodeAdapter extends BaseRecycleAdapter<CodeAdapter.MViewHolder,Integer> {
+    public CodeAdapter(List<Integer> mineDataList) {
+        super(mineDataList);
+    }
+
     @Override
     protected MViewHolder getViewHolder(ViewGroup parent) {
         View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_code,null);
         setClickViewIds(R.id.code_num);
         return new MViewHolder(view);
-    }
-
-    @Override
-    protected List<Integer> getMyItemData() {
-        List<Integer> itemDataList=new ArrayList<>();
-        for (int i = 0; i < 50; i++) {
-            itemDataList.add(i);
-        }
-        return itemDataList;
     }
 
     @Override

@@ -13,6 +13,32 @@ import java.util.List;
 /**
  * Created by lxl on 2017/6/14.
  * 简单的基础类，整合了整体点击和部分view的点击事件
+ * 使用方法：
+ * public class CodeAdapter extends BaseRecycleAdapter<CodeAdapter.MViewHolder,Integer> {
+ * public CodeAdapter(List<Integer> mineDataList) {
+ * super(mineDataList);
+ * }
+ *
+ * @Override
+ * protected MViewHolder getViewHolder(ViewGroup parent) {
+ * View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_code,null);
+ * setClickViewIds(R.id.code_num);//设置点击事件
+ * return new MViewHolder(view);
+ * }
+
+ * @Override
+ * protected void onMyBindViewHolder(MViewHolder holder, int position) {
+ * holder.superTextView.setText(position+1+"");
+ * }
+
+
+ * public class MViewHolder extends RecyclerView.ViewHolder{
+ * SuperTextView superTextView;
+ * public MViewHolder(View itemView) {
+ * super(itemView);
+ * superTextView= (SuperTextView) itemView.findViewById(R.id.code_num);
+ * }
+ * }
  */
 
 public abstract class BaseRecycleAdapter<VH extends RecyclerView.ViewHolder,V> extends RecyclerView.Adapter<VH> {
@@ -21,10 +47,12 @@ public abstract class BaseRecycleAdapter<VH extends RecyclerView.ViewHolder,V> e
     private int[] intIds;
     private Context context;
     private List<V> mineDataList=new ArrayList<>();
+    public BaseRecycleAdapter(List<V> mineDataList){
+        this.mineDataList=mineDataList;
+    }
     @Override
     public VH onCreateViewHolder(ViewGroup parent, int viewType) {
         this.context=parent.getContext();
-        mineDataList=getMyItemData();
         return getViewHolder(parent);
     }
 
@@ -48,7 +76,7 @@ public abstract class BaseRecycleAdapter<VH extends RecyclerView.ViewHolder,V> e
                         }
                     });
                 }else {
-                    Toast.makeText(context, "Holder View Id Is Null", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context,"The Id Isn't Belong The ViewHolder", Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -56,12 +84,11 @@ public abstract class BaseRecycleAdapter<VH extends RecyclerView.ViewHolder,V> e
     }
 
     protected abstract VH getViewHolder(ViewGroup parent);
-    protected abstract List<V> getMyItemData();
     protected abstract void onMyBindViewHolder(VH holder, final int position);
 
     @Override
     public int getItemCount() {
-        return getMyItemData().size();
+        return mineDataList.size();
     }
 
 
