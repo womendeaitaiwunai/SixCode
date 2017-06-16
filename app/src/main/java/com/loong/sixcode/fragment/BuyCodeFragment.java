@@ -1,8 +1,12 @@
 package com.loong.sixcode.fragment;
 
 import android.app.Dialog;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringDef;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
@@ -25,6 +29,10 @@ import com.loong.sixcode.adapter.BuySomeAdapter;
 import com.loong.sixcode.adapter.CodeAdapter;
 import com.loong.sixcode.base.BaseRecycleAdapter;
 import com.loong.sixcode.bean.BuyResultBean;
+import com.loong.sixcode.util.Base64Utils;
+import com.loong.sixcode.util.RSAUtils;
+import com.loong.sixcode.view.Sneaker;
+import com.loong.sixcode.view.SureBuyDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +41,7 @@ import java.util.List;
  * Created by lxl on 2017/6/10.
  */
 
-public class BuyCodeFragment extends Fragment {
+public class BuyCodeFragment extends Fragment implements View.OnClickListener{
     private RadioGroup radioGroup;
     private RecyclerView codeRecycle,resultRecycle,someRecycle;
     private CodeAdapter codeAdapter;
@@ -61,6 +69,8 @@ public class BuyCodeFragment extends Fragment {
         radioGroup= (RadioGroup) view.findViewById(R.id.select_group);
         nextView= (LinearLayout) view.findViewById(R.id.next_view);
         someRecycle= (RecyclerView) nextView.findViewById(R.id.some_select_recycle);
+        nextView.findViewById(R.id.some_sure).setOnClickListener(this);
+        nextView.findViewById(R.id.some_sure).setOnClickListener(this);
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -73,12 +83,15 @@ public class BuyCodeFragment extends Fragment {
     }
 
     private void initData() {
-        codeAdapter=new CodeAdapter();
+        List<Integer> codeList=new ArrayList<>();
+        for (int i = 1; i < 50; i++) codeList.add(i);
+        codeAdapter=new CodeAdapter(codeList);
         GridLayoutManager manager=new GridLayoutManager(getActivity(),7);
         codeRecycle.setLayoutManager(manager);
         codeRecycle.setAdapter(codeAdapter);
 
-        List<Integer> someBuy=new ArrayList<>();
+
+        List<String> someBuy=new ArrayList<>();
         buySomeAdapter=new BuySomeAdapter(someBuy);
         LinearLayoutManager layoutManager=new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -92,22 +105,140 @@ public class BuyCodeFragment extends Fragment {
         resultRecycle.setLayoutManager(manager1);
         resultRecycle.setAdapter(buyResultAdapter);
 
+
         codeAdapter.setOnItemViewClickListener(new BaseRecycleAdapter.OnItemViewClickListener<Integer>() {
             @Override
-            public void itemViewClick(Integer integer) {
-                if (isSingle) showSingeBuyDialog(integer);
-                else buySomeAdapter.addItemView(integer);
+            public void itemViewClick(Integer integer,int position) {
+                List<String> result=new ArrayList<>();
+                result.add(integer+"");
+                if (isSingle) showSingeBuyDialog(result);
+                else {
+                    buySomeAdapter.addItemView(integer+"",false);
+                    someRecycle.smoothScrollToPosition(buySomeAdapter.getItemCount());
+                }
             }
         });
 
+        buySomeAdapter.setOnItemViewClickListener(new BaseRecycleAdapter.OnItemViewClickListener<String>() {
+            @Override
+            public void itemViewClick(String s,int position) {
+                buySomeAdapter.removeItemView(position);
+            }
+        });
+
+
+        buyResultAdapter.setOnViewClickListener(new BaseRecycleAdapter.OnViewClickListener<BuyResultBean>() {
+            @Override
+            public void viewClick(BuyResultBean buyResultBean, int clickId, int position) {
+                if (clickId==R.id.change_result){
+                    int resultBuyNum=buyResultBean.getBuyNum().size();
+                    String result="";
+                    for (int i = 0; i <resultBuyNum; i++) {
+                        result=result+buyResultBean.getBuyNum().get(i)+"、";
+                    }
+                    if (result.endsWith("、")) result=result.substring(0,result.length()-1);
+                    if (resultBuyNum>1) result=result+"/各"+(buyResultBean.getMoney()/resultBuyNum)+"块";
+                    else result=result+"/"+buyResultBean.getMoney()+"块";
+                    String jiamiString=jiaMi(result);
+                    copy(jiamiString,getActivity());
+                }
+            }
+        });
+
+        buyResultAdapter.setOnItemViewLongClickListener(new BaseRecycleAdapter.OnItemViewLongClickListener<BuyResultBean>() {
+            @Override
+            public void itemLongViewClick(BuyResultBean buyResultBean, final int position) {
+                AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
+                builder.setMessage("是否删除这条记录");
+                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        buyResultAdapter.removeItemView(position);
+                    }
+                });
+                builder.show();
+            }
+        });
+
+
     }
 
-    private void showSingeBuyDialog(int position){
-        Toast.makeText(getActivity(), "点击了"+(position+1), Toast.LENGTH_SHORT).show();
-//        AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
-//        initDialogView(position);
-//        builder.setView(dialogView);
-//        buyDialog=builder.show();
+    /**
+     * 选择购买的弹框
+     */
+    private void showSingeBuyDialog(List<String> sureResult){
+        SureBuyDialog sureBuyDialog=new SureBuyDialog(getActivity(),sureResult);
+        sureBuyDialog.setBuyResultCallBack(new SureBuyDialog.BuyResultCallBack() {
+            @Override
+            public void resultBack(BuyResultBean buyResultBean) {
+                buyResultAdapter.addItemView(buyResultBean,true);
+                resultRecycle.smoothScrollToPosition(buyResultAdapter.getItemCount());
+                showBuySneaker(buyResultBean);
+            }
+        });
+        sureBuyDialog.show();
     }
 
+    private void showBuySneaker(BuyResultBean buyResultBean){
+        int resultBuyNum=buyResultBean.getBuyNum().size();
+        String result="";
+        for (int i = 0; i <resultBuyNum; i++) {
+            result=result+buyResultBean.getBuyNum().get(i)+"、";
+        }
+        if (result.endsWith("、")) result=result.substring(0,result.length()-1);
+        if (resultBuyNum>1) result=result+"/各"+(buyResultBean.getMoney()/resultBuyNum)+"块";
+        else result=result+"/"+buyResultBean.getMoney()+"块";
+        Sneaker.with(getActivity())
+                .setTitle("单据加入成功")
+                .setDuration(3000)
+                .setMessage(result)
+                .sneakSuccess();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.some_sure:
+                showSingeBuyDialog(buySomeAdapter.getAllData());
+                buySomeAdapter.refreshView();
+                break;
+            case R.id.some_canal:
+                buySomeAdapter.refreshView();
+                break;
+        }
+    }
+
+
+    /**
+     * 实现文本复制功能
+     * @param content
+     */
+    public static void copy(String content, Context context) {
+        Toast.makeText(context, "已经复制请选择地方粘贴", Toast.LENGTH_SHORT).show();
+        ClipboardManager cmb = (ClipboardManager) context
+                .getSystemService(Context.CLIPBOARD_SERVICE);
+        cmb.setText(content.trim());
+    }
+
+    private String jiaMi(String jiami){
+        String publicString="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA869kB6Y2xwtokIFkblehG4jOiVfI325D" +
+                "vbsDbdYTa4QImwJVPJQ9sbMspwJY7EmZZVdTAmrqXO+PmS2ZPNHQ9gEnX2oDQp6GMMsrEIiBTdg6" +
+                "mjbJgn63/AbbB1t640EOjR160SiD+iqQA5tKTZvshQYq2owxFH8JSgMhDOI5WqgW4gCuVZok+Dfk" +
+                "fbyS1hrmpMfKe6c1pVG8PWhOv7AHdPBZaOSpOqSfBGU0iUXUCO9KFg+Sp72FgqCJXNF1p4s0yGE9" +
+                "B5Eid9yNXB27NkmVOwXxhzPXNfXjVHr2tXqzhZdoknNFIOxAGeYvhnihrfpRqvibZ85U67DzkO2E" +
+                "VHfhAQIDAQAB";
+        String result="";
+        try {
+            result= Base64Utils.encode(RSAUtils.encryptData(jiami.getBytes(),RSAUtils.loadPublicKey(publicString)));
+        }catch (Exception e){
+            Toast.makeText(getActivity(), "加密出错", Toast.LENGTH_SHORT).show();
+        }
+        return result;
+    }
 }

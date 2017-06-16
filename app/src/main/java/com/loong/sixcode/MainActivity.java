@@ -1,5 +1,9 @@
 package com.loong.sixcode;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -18,20 +22,25 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.loong.sixcode.base.BaseActivity;
 import com.loong.sixcode.fragment.AllCodeFragment;
 import com.loong.sixcode.fragment.BuyCodeFragment;
 import com.loong.sixcode.fragment.LookCodeFragment;
 import com.loong.sixcode.fragment.SearchCodeFragment;
+import com.loong.sixcode.service.ClipBoardService;
+import com.loong.sixcode.service.FloatingWindowService;
 import com.loong.sixcode.view.Sneaker;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.jar.Manifest;
 
 import eu.long1.spacetablayout.SpaceTabLayout;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener,View.OnClickListener {
-    SpaceTabLayout tabLayout;
+    private SpaceTabLayout tabLayout;
+    private ClipBoardReceiver mBoardReceiver;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +71,7 @@ public class MainActivity extends AppCompatActivity
 
 
         ViewPager viewPager= (ViewPager) findViewById(R.id.view_pager);
+        viewPager.setOffscreenPageLimit(3);
         List<Fragment> fragmentList=new ArrayList<>();
         fragmentList.add(new LookCodeFragment());
         fragmentList.add(new BuyCodeFragment());
@@ -73,7 +83,24 @@ public class MainActivity extends AppCompatActivity
         //we need the savedInstanceState to get the position
         tabLayout.initialize(viewPager, getSupportFragmentManager(),
                 fragmentList, savedInstanceState);
+        Intent mIntent = new Intent();
+        mIntent.setClass(MainActivity.this, ClipBoardService.class);
+        startService(mIntent);
 
+        mBoardReceiver = new ClipBoardReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("com.loong.sixcode.service.ClipBoardReceiver");
+        registerReceiver(mBoardReceiver, filter);
+
+        performCodeWithPermission("设置相应的权限", new PermissionCallback() {
+            @Override
+            public void hasPermission() {}
+            @Override
+            public void noPermission() {
+                showToast("没有相应的权限");
+                finish();
+            }
+        }, android.Manifest.permission.SYSTEM_ALERT_WINDOW);
     }
 
     @Override
@@ -161,6 +188,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        this.unregisterReceiver(mBoardReceiver);
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.button1:
@@ -194,6 +227,21 @@ public class MainActivity extends AppCompatActivity
                         .setMessage("This is the warning message")
                         .sneakWarning();
                 break;
+        }
+    }
+
+    class ClipBoardReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle bundle = intent.getExtras();
+            if(bundle != null){
+                String value = (String) bundle.get("clipboardvalue");
+                Intent show = new Intent(MainActivity.this, FloatingWindowService.class);
+                show.putExtra(FloatingWindowService.OPERATION,FloatingWindowService.OPERATION_SHOW);
+                show.putExtra("copyValue", value);
+                MainActivity.this.startService(show);
+            }
         }
     }
 }

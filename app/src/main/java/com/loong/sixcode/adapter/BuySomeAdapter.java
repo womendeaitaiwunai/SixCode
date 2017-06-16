@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.coorchice.library.SuperTextView;
 import com.loong.sixcode.R;
+import com.loong.sixcode.base.BaseRecycleAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,26 +16,23 @@ import java.util.List;
  * Created by lxl on 2017/6/14.
  */
 
-public class BuySomeAdapter extends RecyclerView.Adapter<BuySomeAdapter.MViewHolder> {
-    List<Integer> someNumbers=new ArrayList<>();
-    public BuySomeAdapter(List<Integer> someNumbers){
-        this.someNumbers=someNumbers;
+public class BuySomeAdapter extends BaseRecycleAdapter<BuySomeAdapter.MViewHolder,String> {
+    public BuySomeAdapter(List<String> someNumbers){
+        super(someNumbers);
     }
+
+
     @Override
-    public MViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_buy_view,null,false);
+    protected MViewHolder getViewHolder(ViewGroup parent) {
+        View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_buy_view,parent,false);
         return new MViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(MViewHolder holder, int position) {
-        holder.someCode.setText(someNumbers.get(position)+1+"");
+    protected void onMyBindViewHolder(MViewHolder holder, int position, List<String> mineDataList) {
+        holder.someCode.setText(mineDataList.get(position));
     }
 
-    @Override
-    public int getItemCount() {
-        return someNumbers.size();
-    }
 
     public class MViewHolder extends RecyclerView.ViewHolder{
         SuperTextView someCode;
@@ -44,8 +42,4 @@ public class BuySomeAdapter extends RecyclerView.Adapter<BuySomeAdapter.MViewHol
         }
     }
 
-    public void addItemView(int itemNum){
-        someNumbers.add(itemNum);
-        notifyDataSetChanged();
-    }
 }

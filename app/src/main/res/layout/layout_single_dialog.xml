@@ -7,6 +7,7 @@
     android:gravity="center">
     <android.support.v7.widget.RecyclerView
         android:id="@+id/buy_dialog_recycle"
+        android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
     <com.coorchice.library.SuperTextView
@@ -19,6 +20,7 @@
         android:gravity="center"
         android:textColor="#ffffff"
         android:textSize="30sp"
+        android:visibility="gone"
         android:text="1"
         app:solid="#cdcddd"
         app:state_drawable_mode="center"/>
@@ -29,7 +31,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="购买金额:"/>
+            android:text="每个数购买金额:"/>
         <EditText
             android:id="@+id/money"
             android:layout_width="150dp"
@@ -39,6 +41,8 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
         android:orientation="horizontal">
         <TextView
             android:id="@+id/one"
@@ -101,6 +105,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
         android:orientation="horizontal">
         <TextView
             android:id="@+id/five"

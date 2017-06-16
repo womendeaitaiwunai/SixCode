@@ -44,6 +44,7 @@ import java.util.List;
 public abstract class BaseRecycleAdapter<VH extends RecyclerView.ViewHolder,V> extends RecyclerView.Adapter<VH> {
     private OnViewClickListener<V> onViewClickListener;
     private OnItemViewClickListener<V> onItemViewClickListener;
+    private OnItemViewLongClickListener<V> onItemViewLongClickListener;
     private int[] intIds;
     private Context context;
     private List<V> mineDataList=new ArrayList<>();
@@ -62,9 +63,18 @@ public abstract class BaseRecycleAdapter<VH extends RecyclerView.ViewHolder,V> e
             holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onItemViewClickListener.itemViewClick(mineDataList.get(position));
+                onItemViewClickListener.itemViewClick(mineDataList.get(position),position);
             }
         });
+        if (onItemViewLongClickListener!=null){
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    onItemViewLongClickListener.itemLongViewClick(mineDataList.get(position),position);
+                    return false;
+                }
+            });
+        }
         if (onViewClickListener!=null&&intIds!=null&&intIds.length>0){
             for (final int ids:intIds){
                 View view=holder.itemView.findViewById(ids);
@@ -72,7 +82,7 @@ public abstract class BaseRecycleAdapter<VH extends RecyclerView.ViewHolder,V> e
                     view.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            onViewClickListener.viewClick(mineDataList.get(position),ids);
+                            onViewClickListener.viewClick(mineDataList.get(position),ids,position);
                         }
                     });
                 }else {
@@ -80,11 +90,11 @@ public abstract class BaseRecycleAdapter<VH extends RecyclerView.ViewHolder,V> e
                 }
             }
         }
-        onMyBindViewHolder(holder,position);
+        onMyBindViewHolder(holder,position,mineDataList);
     }
 
     protected abstract VH getViewHolder(ViewGroup parent);
-    protected abstract void onMyBindViewHolder(VH holder, final int position);
+    protected abstract void onMyBindViewHolder(VH holder, final int position,List<V> mineDataList);
 
     @Override
     public int getItemCount() {
@@ -93,38 +103,107 @@ public abstract class BaseRecycleAdapter<VH extends RecyclerView.ViewHolder,V> e
 
 
     public interface OnViewClickListener<V>{
-        void viewClick(V v,int clickId);
+        void viewClick(V v,int clickId,int position);
     }
 
     public interface OnItemViewClickListener<V>{
-        void itemViewClick(V v);
+        void itemViewClick(V v,int position);
     }
 
-    public void setOnViewClickListener(OnViewClickListener<V> onViewClickListener){
-        this.onViewClickListener=onViewClickListener;
+    public interface OnItemViewLongClickListener<V>{
+        void itemLongViewClick(V v,int position);
     }
 
+
+    /**
+     * 设置点击事件的ID
+     * @param clickIds 要点击的id
+     */
     public void setClickViewIds(int... clickIds){
         this.intIds=clickIds;
     }
 
+
+    /**
+     *  设置VIew点击的回调监听
+     * @param onViewClickListener view监听事件
+     */
+    public void setOnViewClickListener(OnViewClickListener<V> onViewClickListener){
+        this.onViewClickListener=onViewClickListener;
+    }
+
+    /**
+     *  整个view点击回调
+     * @param onItemViewClickListener 回调函数
+     */
     public void setOnItemViewClickListener(OnItemViewClickListener<V> onItemViewClickListener){
         this.onItemViewClickListener=onItemViewClickListener;
     }
 
-    public void addItemView(V value){
-        mineDataList.add(value);
+    /**
+     *  整个view点击回调
+     * @param onItemViewLongClickListener 回调函数
+     */
+    public void setOnItemViewLongClickListener(OnItemViewLongClickListener<V> onItemViewLongClickListener){
+        this.onItemViewLongClickListener=onItemViewLongClickListener;
+    }
+
+
+    /**
+     *
+     * @param value 增加的数据
+     * @param isAgain 数据是否可以重复
+     */
+    public void addItemView(V value,boolean isAgain){
+        if (isAgain) mineDataList.add(value);
+        else {
+            if (!mineDataList.contains(value))
+                mineDataList.add(value);
+        }
         notifyDataSetChanged();
     }
 
+    /**
+     *  删除数据
+     * @param value 要删除的数据
+     */
+    public void removeItemView(V value){
+        mineDataList.remove(value);
+        notifyDataSetChanged();
+    }
+
+    /**
+     * 删除数据
+     * @param position 删除数据的地址
+     */
+    public void removeItemView(int position){
+        mineDataList.remove(position);
+        notifyDataSetChanged();
+    }
+
+    /**
+     *  一次增加很多数据
+     * @param values 要增加的数据
+     */
     public void addSomeItemView(List<V> values){
         mineDataList.addAll(values);
         notifyDataSetChanged();
     }
 
+    /**
+     * 刷新界面  --清除数据
+     */
     public void refreshView(){
         mineDataList=new ArrayList<>();
         notifyDataSetChanged();
+    }
+
+    /**
+     * 获取所有数据
+     * @return 所有数据
+     */
+    public List<V> getAllData(){
+        return mineDataList;
     }
 
 }

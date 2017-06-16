@@ -1,77 +1,63 @@
 package com.loong.sixcode.adapter;
 
-import android.content.Context;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.coorchice.library.SuperTextView;
 import com.loong.sixcode.R;
+import com.loong.sixcode.base.BaseRecycleAdapter;
 import com.loong.sixcode.bean.BuyResultBean;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by lxl on 2017/6/10.
  */
 
-public class BuyResultAdapter extends RecyclerView.Adapter<BuyResultAdapter.MViewHolder> {
-    List<BuyResultBean> buyResultBeenList=new ArrayList<>();
-    private Context context;
+public class BuyResultAdapter extends BaseRecycleAdapter<BuyResultAdapter.MViewHolder,BuyResultBean> {
     public BuyResultAdapter(List<BuyResultBean> buyResultBeenList){
-        this.buyResultBeenList=buyResultBeenList;
+        super(buyResultBeenList);
     }
+
     @Override
-    public MViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        context=parent.getContext();
-        View view= LayoutInflater.from(context).inflate(R.layout.adapter_buy_result,parent,false);
+    protected MViewHolder getViewHolder(ViewGroup parent) {
+        View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_buy_result,parent,false);
+        setClickViewIds(R.id.change_result);
         return new MViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(MViewHolder holder, int position) {
-        long timeData=buyResultBeenList.get(position).getTime();
+    protected void onMyBindViewHolder(MViewHolder holder, int position, List<BuyResultBean> mineDataList) {
+        long timeData=mineDataList.get(position).getTime();
         SimpleDateFormat sdf = new SimpleDateFormat("HH时mm分ss秒");
         String time=sdf.format(timeData);
         holder.time.setText(time);
 
-        BuyResultBean resultBean=buyResultBeenList.get(position);
+        BuyResultBean resultBean=mineDataList.get(position);
         holder.allMoney.setText(resultBean.getMoney()+0+"块");
         int resultBuyNum=resultBean.getBuyNum().size();
-        holder.buyResult.removeAllViews();
+        String result="";
         for (int i = 0; i <resultBuyNum; i++) {
-            View buyView=LayoutInflater.from(context).inflate(R.layout.layout_buy_view,null,false);
-            SuperTextView buyNum= (SuperTextView) buyView.findViewById(R.id.code_num);
-            buyNum.setText( resultBean.getBuyNum().get(i));
-            holder.buyResult.addView(buyNum);
+            result=result+resultBean.getBuyNum().get(i)+"、";
         }
-    }
-
-    @Override
-    public int getItemCount() {
-        return buyResultBeenList.size();
+        if (result.endsWith("、")) result=result.substring(0,result.length()-1);
+        if (resultBuyNum>1) result=result+"/各"+(resultBean.getMoney()/resultBuyNum)+"块";
+        holder.buyResult.setText(result);
     }
 
     public class MViewHolder extends RecyclerView.ViewHolder{
         TextView time;
-        LinearLayout buyResult;
+        TextView buyResult;
         TextView allMoney;
         public MViewHolder(View itemView) {
             super(itemView);
             time= (TextView) itemView.findViewById(R.id.time);
-            buyResult= (LinearLayout) itemView.findViewById(R.id.but_code);
+            buyResult= (TextView) itemView.findViewById(R.id.but_code);
             allMoney= (TextView) itemView.findViewById(R.id.all_money);
         }
     }
 
-    public void addItemView(BuyResultBean buyResultBean){
-        buyResultBeenList.add(buyResultBean);
-        notifyDataSetChanged();
-    }
 }
