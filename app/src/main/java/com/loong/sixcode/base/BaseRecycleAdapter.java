@@ -191,10 +191,25 @@ public abstract class BaseRecycleAdapter<VH extends RecyclerView.ViewHolder,V> e
     }
 
     /**
-     * 刷新界面  --清除数据
+     *  --清除数据
+     */
+    public void cleanView(){
+        mineDataList=new ArrayList<>();
+        notifyDataSetChanged();
+    }
+
+    /**
+     *  刷新界面-
      */
     public void refreshView(){
-        mineDataList=new ArrayList<>();
+        notifyDataSetChanged();
+    }
+
+
+
+    public void changeDataByPosition(int position,V v){
+        mineDataList.remove(position);
+        mineDataList.add(position,v);
         notifyDataSetChanged();
     }
 

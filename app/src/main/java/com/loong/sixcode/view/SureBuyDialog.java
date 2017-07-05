@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.coorchice.library.SuperTextView;
 import com.loong.sixcode.R;
 import com.loong.sixcode.adapter.BuySomeAdapter;
+import com.loong.sixcode.base.BaseRecycleAdapter;
 import com.loong.sixcode.bean.BuyResultBean;
 
 import java.util.ArrayList;
@@ -27,9 +28,13 @@ public class SureBuyDialog extends Dialog {
     private BuyResultCallBack buyResultCallBack;
     private RecyclerView buyDialogRecycle;
     private BuySomeAdapter adapter;
-    public SureBuyDialog(Context context,List<String> buyNum) {
+    private String buyMoney="";
+    private int changePosition=-1;
+    public SureBuyDialog(Context context,List<String> buyNum,String money,int changePosition) {
         super(context);
         this.buyAllNum=buyNum;
+        this.buyMoney=money;
+        this.changePosition=changePosition;
         initDialogView();
         setCanceledOnTouchOutside(false);
         setCancelable(true);
@@ -38,7 +43,21 @@ public class SureBuyDialog extends Dialog {
         LinearLayoutManager manager=new LinearLayoutManager(this.getContext());
         manager.setOrientation(LinearLayoutManager.HORIZONTAL);
         buyDialogRecycle.setLayoutManager(manager);
+        buyDialogRecycle.smoothScrollToPosition(buyNum.size());
         buyDialogRecycle.setAdapter(adapter);
+
+        adapter.setOnItemViewLongClickListener(new BaseRecycleAdapter.OnItemViewLongClickListener<String>() {
+            @Override
+            public void itemLongViewClick(String s, int position) {
+                if (buyAllNum.size()>1){
+                    Toast.makeText(getContext(), "删除了号码："+s, Toast.LENGTH_SHORT).show();
+                    buyAllNum.remove(position);
+                    adapter.notifyDataSetChanged();
+                }else {
+                    Toast.makeText(getContext(), "已经是最后一个号码，不能删除", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     private View dialogView;
@@ -60,6 +79,8 @@ public class SureBuyDialog extends Dialog {
         eight= (TextView) dialogView.findViewById(R.id.eight);
         sure= (TextView) dialogView.findViewById(R.id.sure);
         cancel= (TextView) dialogView.findViewById(R.id.cancel);
+
+        money.setText(buyMoney);
 
         //diaCode.setText(position+1+"");
 
@@ -145,7 +166,7 @@ public class SureBuyDialog extends Dialog {
                 buyResultBean.setMoney(mMoney*buyNum.size());
                 buyResultBean.setTime(System.currentTimeMillis());
                 if (buyResultCallBack!=null) {
-                    buyResultCallBack.resultBack(buyResultBean);
+                    buyResultCallBack.resultBack(buyResultBean,changePosition);
                     buyDialogRecycle.smoothScrollToPosition(buyNum.size());
                 }
                 SureBuyDialog.this.dismiss();
@@ -171,6 +192,6 @@ public class SureBuyDialog extends Dialog {
     }
 
     public interface BuyResultCallBack{
-        void resultBack(BuyResultBean buyResultBean);
+        void resultBack(BuyResultBean buyResultBean,int position);
     }
 }

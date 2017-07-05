@@ -1,34 +1,35 @@
 package com.loong.sixcode.fragment;
 
-import android.app.Dialog;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.annotation.StringDef;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.coorchice.library.SuperTextView;
+import com.google.gson.Gson;
+import com.loong.sixcode.HistoryBuyActivity;
+import com.loong.sixcode.MainActivity;
 import com.loong.sixcode.R;
 import com.loong.sixcode.adapter.BuyResultAdapter;
 import com.loong.sixcode.adapter.BuySomeAdapter;
 import com.loong.sixcode.adapter.CodeAdapter;
 import com.loong.sixcode.base.BaseRecycleAdapter;
+import com.loong.sixcode.bean.BuyCodeDao;
 import com.loong.sixcode.bean.BuyResultBean;
+import com.loong.sixcode.greendao.BuyCodeDbDao;
 import com.loong.sixcode.util.Base64Utils;
 import com.loong.sixcode.util.RSAUtils;
 import com.loong.sixcode.view.Sneaker;
@@ -39,12 +40,11 @@ import java.util.List;
 
 /**
  * Created by lxl on 2017/6/10.
+ * 购买码页面
  */
 
 public class BuyCodeFragment extends Fragment implements View.OnClickListener{
-    private RadioGroup radioGroup;
     private RecyclerView codeRecycle,resultRecycle,someRecycle;
-    private CodeAdapter codeAdapter;
     private BuyResultAdapter buyResultAdapter;
     private BuySomeAdapter buySomeAdapter;
     private LinearLayout nextView;
@@ -66,11 +66,13 @@ public class BuyCodeFragment extends Fragment implements View.OnClickListener{
     private void initView(View view) {
         codeRecycle= (RecyclerView) view.findViewById(R.id.code_recycle);
         resultRecycle= (RecyclerView) view.findViewById(R.id.buy_recycle);
-        radioGroup= (RadioGroup) view.findViewById(R.id.select_group);
+        RadioGroup radioGroup= (RadioGroup) view.findViewById(R.id.select_group);
         nextView= (LinearLayout) view.findViewById(R.id.next_view);
         someRecycle= (RecyclerView) nextView.findViewById(R.id.some_select_recycle);
         nextView.findViewById(R.id.some_sure).setOnClickListener(this);
-        nextView.findViewById(R.id.some_sure).setOnClickListener(this);
+        nextView.findViewById(R.id.some_canal).setOnClickListener(this);
+        view.findViewById(R.id.first_show).setOnClickListener(this);
+        view.findViewById(R.id.first_op).setOnClickListener(this);
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -85,7 +87,7 @@ public class BuyCodeFragment extends Fragment implements View.OnClickListener{
     private void initData() {
         List<Integer> codeList=new ArrayList<>();
         for (int i = 1; i < 50; i++) codeList.add(i);
-        codeAdapter=new CodeAdapter(codeList);
+        CodeAdapter codeAdapter=new CodeAdapter(codeList);
         GridLayoutManager manager=new GridLayoutManager(getActivity(),7);
         codeRecycle.setLayoutManager(manager);
         codeRecycle.setAdapter(codeAdapter);
@@ -111,7 +113,7 @@ public class BuyCodeFragment extends Fragment implements View.OnClickListener{
             public void itemViewClick(Integer integer,int position) {
                 List<String> result=new ArrayList<>();
                 result.add(integer+"");
-                if (isSingle) showSingeBuyDialog(result);
+                if (isSingle) showSingeBuyDialog(result,"",-1);
                 else {
                     buySomeAdapter.addItemView(integer+"",false);
                     someRecycle.smoothScrollToPosition(buySomeAdapter.getItemCount());
@@ -131,16 +133,7 @@ public class BuyCodeFragment extends Fragment implements View.OnClickListener{
             @Override
             public void viewClick(BuyResultBean buyResultBean, int clickId, int position) {
                 if (clickId==R.id.change_result){
-                    int resultBuyNum=buyResultBean.getBuyNum().size();
-                    String result="";
-                    for (int i = 0; i <resultBuyNum; i++) {
-                        result=result+buyResultBean.getBuyNum().get(i)+"、";
-                    }
-                    if (result.endsWith("、")) result=result.substring(0,result.length()-1);
-                    if (resultBuyNum>1) result=result+"/各"+(buyResultBean.getMoney()/resultBuyNum)+"块";
-                    else result=result+"/"+buyResultBean.getMoney()+"块";
-                    String jiamiString=jiaMi(result);
-                    copy(jiamiString,getActivity());
+                    showSingeBuyDialog(buyResultBean.getBuyNum(),(buyResultBean.getMoney()/buyResultBean.getBuyNum().size())+"",position);
                 }
             }
         });
@@ -172,12 +165,13 @@ public class BuyCodeFragment extends Fragment implements View.OnClickListener{
     /**
      * 选择购买的弹框
      */
-    private void showSingeBuyDialog(List<String> sureResult){
-        SureBuyDialog sureBuyDialog=new SureBuyDialog(getActivity(),sureResult);
+    private void showSingeBuyDialog(List<String> sureResult,String money,int changePosition){
+        SureBuyDialog sureBuyDialog=new SureBuyDialog(getActivity(),sureResult,money,changePosition);
         sureBuyDialog.setBuyResultCallBack(new SureBuyDialog.BuyResultCallBack() {
             @Override
-            public void resultBack(BuyResultBean buyResultBean) {
-                buyResultAdapter.addItemView(buyResultBean,true);
+            public void resultBack(BuyResultBean buyResultBean,int changePosition) {
+                if (changePosition==-1) buyResultAdapter.addItemView(buyResultBean,true);
+                else buyResultAdapter.changeDataByPosition(changePosition,buyResultBean);
                 resultRecycle.smoothScrollToPosition(buyResultAdapter.getItemCount());
                 showBuySneaker(buyResultBean);
             }
@@ -205,11 +199,36 @@ public class BuyCodeFragment extends Fragment implements View.OnClickListener{
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.some_sure:
-                showSingeBuyDialog(buySomeAdapter.getAllData());
-                buySomeAdapter.refreshView();
+                if (buySomeAdapter.getItemCount()!=0) showSingeBuyDialog(buySomeAdapter.getAllData(),"",-1);
+                buySomeAdapter.cleanView();
                 break;
             case R.id.some_canal:
-                buySomeAdapter.refreshView();
+                buySomeAdapter.cleanView();
+                break;
+            case R.id.first_op:
+                startActivity(new Intent(getActivity(), HistoryBuyActivity.class));
+                break;
+            case R.id.first_show:
+                List<BuyResultBean> buyResultBeanList = buyResultAdapter.getAllData();
+                for (BuyResultBean buyResultBean:buyResultBeanList){
+                    String buyAllCode="";
+                    for (String buyCode:buyResultBean.getBuyNum()){
+                        buyAllCode=buyAllCode+buyCode+"、";
+                    }
+                    if (TextUtils.isEmpty(buyAllCode)) return;
+                    if (buyAllCode.endsWith("、")) buyAllCode=buyAllCode.substring(0,buyAllCode.length()-1);
+                    BuyCodeDao buyCodeDao=new BuyCodeDao();
+                    buyCodeDao.setBuyCode(buyAllCode);
+                    buyCodeDao.setBuyTime(buyResultBean.getTime());
+                    buyCodeDao.setMoney(buyResultBean.getMoney());
+                    BuyCodeDbDao.insertBuyCode(buyCodeDao);
+                }
+                ((MainActivity)getActivity()).addCodeData();
+
+//                Gson gson=new Gson();
+//                String jsonString=gson.toJson(buyResultBeanList);
+//                String jiamiString=jiaMi(jsonString);
+//                copy(jiamiString,getActivity());
                 break;
         }
     }
@@ -217,7 +236,7 @@ public class BuyCodeFragment extends Fragment implements View.OnClickListener{
 
     /**
      * 实现文本复制功能
-     * @param content
+     * @param content 主页
      */
     public static void copy(String content, Context context) {
         Toast.makeText(context, "已经复制请选择地方粘贴", Toast.LENGTH_SHORT).show();

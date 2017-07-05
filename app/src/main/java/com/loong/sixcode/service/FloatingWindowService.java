@@ -14,9 +14,16 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.loong.sixcode.R;
+import com.loong.sixcode.bean.BuyResultBean;
 import com.loong.sixcode.util.Base64Utils;
 import com.loong.sixcode.util.RSAUtils;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class FloatingWindowService extends Service {
@@ -158,7 +165,23 @@ public class FloatingWindowService extends Service {
 		ImageView closedImg = (ImageView) rootview.findViewById(R.id.float_window_closed);
 		TextView titleText = (TextView) rootview.findViewById(R.id.float_window_title);
 		byte[] result=decrypt(copyValue);
-		if (result!=null) titleText.setText("特码:"+new String(result));
+		Gson gson=new Gson();
+		List<BuyResultBean> buyResultBeanList=new ArrayList<>();
+		Type type = new TypeToken<List<BuyResultBean>>() {}.getType();
+		if (result!=null) buyResultBeanList= gson.fromJson(new String(result), type);
+		String resultString="";
+		for (int i = 0; i <buyResultBeanList.size(); i++) {
+			BuyResultBean buyResultBean=buyResultBeanList.get(i);
+			for (int j = 0; j <buyResultBean.getBuyNum().size() ; j++) {
+				resultString=resultString+buyResultBean.getBuyNum().get(j)+"、";
+			}
+			if (resultString.endsWith("、")) resultString=resultString.substring(0,resultString.length()-1);
+			if (buyResultBean.getBuyNum().size()>1) resultString
+					=resultString+"各"+(buyResultBean.getMoney()/buyResultBean.getBuyNum().size())+"块"+"\n";
+			else resultString=resultString+"/"+buyResultBean.getMoney()+"块"+"\n";
+		}
+		if (resultString.endsWith("\n")) resultString=resultString.substring(0,resultString.length()-1);
+		if (result!=null) titleText.setText("特码:"+resultString);
 		else wm.removeView(floatView);
 		closedImg.setOnClickListener(new OnClickListener() {
 			

@@ -32,7 +32,7 @@ public class BuyResultAdapter extends BaseRecycleAdapter<BuyResultAdapter.MViewH
     @Override
     protected void onMyBindViewHolder(MViewHolder holder, int position, List<BuyResultBean> mineDataList) {
         long timeData=mineDataList.get(position).getTime();
-        SimpleDateFormat sdf = new SimpleDateFormat("HH时mm分ss秒");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH时mm分ss秒");
         String time=sdf.format(timeData);
         holder.time.setText(time);
 
@@ -44,7 +44,7 @@ public class BuyResultAdapter extends BaseRecycleAdapter<BuyResultAdapter.MViewH
             result=result+resultBean.getBuyNum().get(i)+"、";
         }
         if (result.endsWith("、")) result=result.substring(0,result.length()-1);
-        if (resultBuyNum>1) result=result+"/各"+(resultBean.getMoney()/resultBuyNum)+"块";
+        if (resultBuyNum>1) result=result+"各"+(resultBean.getMoney()/resultBuyNum)+"块";
         holder.buyResult.setText(result);
     }
 

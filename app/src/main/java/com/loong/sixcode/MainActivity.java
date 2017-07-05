@@ -41,6 +41,7 @@ public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener,View.OnClickListener {
     private SpaceTabLayout tabLayout;
     private ClipBoardReceiver mBoardReceiver;
+    private AllCodeFragment allCodeFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,17 +73,30 @@ public class MainActivity extends BaseActivity
 
         ViewPager viewPager= (ViewPager) findViewById(R.id.view_pager);
         viewPager.setOffscreenPageLimit(3);
+        allCodeFragment=new AllCodeFragment();
         List<Fragment> fragmentList=new ArrayList<>();
         fragmentList.add(new LookCodeFragment());
         fragmentList.add(new BuyCodeFragment());
+        fragmentList.add(allCodeFragment);
         fragmentList.add(new SearchCodeFragment());
-        fragmentList.add(new AllCodeFragment());
         viewPager.setAdapter(new MFragmentAdapter(getSupportFragmentManager(),fragmentList));
         tabLayout = (SpaceTabLayout) findViewById(R.id.spaceTabLayout);
 
         //we need the savedInstanceState to get the position
         tabLayout.initialize(viewPager, getSupportFragmentManager(),
                 fragmentList, savedInstanceState);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+            @Override
+            public void onPageSelected(int position) {
+                if (position==2){
+                    allCodeFragment.refreshView();
+                }
+            }
+            @Override
+            public void onPageScrollStateChanged(int state) {}
+        });
         Intent mIntent = new Intent();
         mIntent.setClass(MainActivity.this, ClipBoardService.class);
         startService(mIntent);
@@ -101,6 +115,9 @@ public class MainActivity extends BaseActivity
                 finish();
             }
         }, android.Manifest.permission.SYSTEM_ALERT_WINDOW);
+    }
+    public void addCodeData(){
+        allCodeFragment.addData();
     }
 
     @Override
