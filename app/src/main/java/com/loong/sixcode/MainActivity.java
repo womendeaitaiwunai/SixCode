@@ -19,6 +19,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
@@ -29,11 +30,11 @@ import com.loong.sixcode.fragment.LookCodeFragment;
 import com.loong.sixcode.fragment.SearchCodeFragment;
 import com.loong.sixcode.service.ClipBoardService;
 import com.loong.sixcode.service.FloatingWindowService;
+import com.loong.sixcode.view.NoScrollViewPager;
 import com.loong.sixcode.view.Sneaker;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.jar.Manifest;
 
 import eu.long1.spacetablayout.SpaceTabLayout;
 
@@ -71,7 +72,7 @@ public class MainActivity extends BaseActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 
-        ViewPager viewPager= (ViewPager) findViewById(R.id.view_pager);
+        final NoScrollViewPager viewPager= (NoScrollViewPager) findViewById(R.id.view_pager);
         viewPager.setOffscreenPageLimit(3);
         allCodeFragment=new AllCodeFragment();
         List<Fragment> fragmentList=new ArrayList<>();
@@ -92,11 +93,15 @@ public class MainActivity extends BaseActivity
             public void onPageSelected(int position) {
                 if (position==2){
                     allCodeFragment.refreshView();
+                    viewPager.setScroll(false);
+                }else {
+                    viewPager.setScroll(true);
                 }
             }
             @Override
             public void onPageScrollStateChanged(int state) {}
         });
+
         Intent mIntent = new Intent();
         mIntent.setClass(MainActivity.this, ClipBoardService.class);
         startService(mIntent);

@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.loong.sixcode.R;
 import com.loong.sixcode.base.BaseRecycleAdapter;
 import com.loong.sixcode.bean.BuyResultBean;
+import com.loong.sixcode.bean.CodeBean;
 
 import java.util.List;
 
@@ -18,9 +19,9 @@ import java.util.List;
  * Created by lxl on 2017/7/5.
  */
 
-public class AllCodeAdapter extends BaseRecycleAdapter<AllCodeAdapter.MViewHolder,Integer> {
+public class AllCodeAdapter extends BaseRecycleAdapter<AllCodeAdapter.MViewHolder,CodeBean> {
     private boolean isEdit=false;
-    public AllCodeAdapter(List<Integer> mineDataList,boolean isEdit) {
+    public AllCodeAdapter(List<CodeBean> mineDataList,boolean isEdit) {
         super(mineDataList);
         this.isEdit=isEdit;
     }
@@ -37,9 +38,9 @@ public class AllCodeAdapter extends BaseRecycleAdapter<AllCodeAdapter.MViewHolde
     }
 
     @Override
-    protected void onMyBindViewHolder(MViewHolder holder, int position, List<Integer> mineDataList) {
-        holder.codeNum.setText(position+1+"");
-        holder.codeMoney.setText(mineDataList.get(position)+"");
+    protected void onMyBindViewHolder(MViewHolder holder, int position, List<CodeBean> mineDataList) {
+        holder.codeNum.setText(mineDataList.get(position).getCode());
+        holder.codeMoney.setText((mineDataList.get(position).getMoney())==0?"":(mineDataList.get(position).getMoney())+"");
         if (isEdit) holder.codeMoney.setEnabled(true);
         else holder.codeMoney.setEnabled(false);
 //        for (BuyResultBean buyResultBean:mineDataList){

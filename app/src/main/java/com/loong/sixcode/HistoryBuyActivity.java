@@ -42,9 +42,15 @@ public class HistoryBuyActivity extends BaseActivity {
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(adapter);
         new GetHistory().execute();
+
     }
 
     public class GetHistory extends AsyncTask<Void, Void, List<BuyCodeDao>> {
+        @Override
+        protected void onPreExecute() {
+            showProgressDialog("正在加载历史数据...");
+        }
+
         @Override
         protected List<BuyCodeDao> doInBackground(Void... params) {
             return BuyCodeDbDao.queryAll();
@@ -63,6 +69,7 @@ public class HistoryBuyActivity extends BaseActivity {
             }
             adapter.cleanView();
             adapter.addSomeItemView(buyResultBeenList);
+            hideProgressDialog();
         }
 
     }

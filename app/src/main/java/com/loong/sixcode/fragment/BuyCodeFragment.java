@@ -107,7 +107,6 @@ public class BuyCodeFragment extends Fragment implements View.OnClickListener{
         resultRecycle.setLayoutManager(manager1);
         resultRecycle.setAdapter(buyResultAdapter);
 
-
         codeAdapter.setOnItemViewClickListener(new BaseRecycleAdapter.OnItemViewClickListener<Integer>() {
             @Override
             public void itemViewClick(Integer integer,int position) {
@@ -209,6 +208,7 @@ public class BuyCodeFragment extends Fragment implements View.OnClickListener{
                 startActivity(new Intent(getActivity(), HistoryBuyActivity.class));
                 break;
             case R.id.first_show:
+                ((MainActivity)getActivity()).showProgressDialog("正在提交数据...");
                 List<BuyResultBean> buyResultBeanList = buyResultAdapter.getAllData();
                 for (BuyResultBean buyResultBean:buyResultBeanList){
                     String buyAllCode="";
@@ -224,6 +224,9 @@ public class BuyCodeFragment extends Fragment implements View.OnClickListener{
                     BuyCodeDbDao.insertBuyCode(buyCodeDao);
                 }
                 ((MainActivity)getActivity()).addCodeData();
+                Toast.makeText(getActivity(), "数据增加成功", Toast.LENGTH_SHORT).show();
+                buyResultAdapter.cleanView();
+                ((MainActivity)getActivity()).hideProgressDialog();
 
 //                Gson gson=new Gson();
 //                String jsonString=gson.toJson(buyResultBeanList);

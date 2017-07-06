@@ -12,10 +12,10 @@
         android:layout_height="50dp"
         app:corner="25dp"
         android:gravity="center"
-        android:textColor="#ffffff"
-        android:textSize="30sp"
+        android:textColor="@color/black"
+        android:textSize="20sp"
         android:text="1"
-        app:solid="#cdcddd"
+        android:background="@mipmap/code_bg"
         app:state_drawable_mode="center"/>
     <!--//设置圆角。会同时作用于填充和边框(如果边框存在的话)。-->
     <!--//如果要设置为圆形，只需要把该值设置为宽或长的1/2即可。-->

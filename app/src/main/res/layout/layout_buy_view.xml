@@ -11,9 +11,9 @@
     android:layout_margin="10dp"
     app:corner="25dp"
     android:gravity="center"
-    android:textColor="#ffffff"
+    android:textColor="#000000"
     android:textSize="18sp"
     android:text="1"
-    app:solid="#cdcddd"
+    android:background="@mipmap/code_bg"
     app:state_drawable_mode="center"/>
 </LinearLayout>

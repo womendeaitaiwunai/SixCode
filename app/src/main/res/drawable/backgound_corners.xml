@@ -6,15 +6,15 @@
 
             <stroke android:width="2dip" android:color="@color/colorAccent" />
 
-            <corners android:radius="6dp" />
+            <corners android:radius="5dp" />
         </shape></item>
 
     <item><shape>
             <solid android:color="#ffffffff" />
 
-            <stroke android:width="2.0dip" android:color="@color/colorAccent" />
+            <stroke android:width="2dip" android:color="@color/colorAccent" />
 
-            <corners android:radius="6.0dip" />
+            <corners android:radius="5dp" />
         </shape>
 <color android:color="#eaeaea" />
     </item>
