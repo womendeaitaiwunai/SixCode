@@ -5,4 +5,5 @@ package com.loong.sixcode.common;
  */
 
 public class WebUrl {
+    public static String HistoryCodeUrl="http://m1.1396ck.com/stat/5?client_lang=zh-tw&year=";
 }

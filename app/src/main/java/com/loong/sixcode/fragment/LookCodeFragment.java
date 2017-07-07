@@ -102,7 +102,7 @@ public class LookCodeFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onAnimationRepeat(Animator animation) {}
         });
-        set.setDuration(1500);
+        set.setDuration(1000);
         set.play(animator1).with(animator2).with(animator3).with(animator4);
         set.start();
     }
@@ -127,7 +127,7 @@ public class LookCodeFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onAnimationRepeat(Animator animation) {}
         });
-        set1.setDuration(1500);
+        set1.setDuration(1000);
         set1.play(animator11).with(animator22).with(animator33).with(animator44);
         set1.start();
     }

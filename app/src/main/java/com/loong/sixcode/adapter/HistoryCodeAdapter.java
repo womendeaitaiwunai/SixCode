@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.coorchice.library.SuperTextView;
 import com.loong.sixcode.R;
 import com.loong.sixcode.base.BaseRecycleAdapter;
+import com.loong.sixcode.bean.AllHistoryBean;
 import com.loong.sixcode.bean.HistoryCodeBean;
 
 import java.util.List;
@@ -17,8 +18,8 @@ import java.util.List;
  * Created by lxl on 2017/7/7.
  */
 
-public class HistoryCodeAdapter extends BaseRecycleAdapter<HistoryCodeAdapter.MViewHolder,HistoryCodeBean.ItemsBean> {
-    public HistoryCodeAdapter(List<HistoryCodeBean.ItemsBean> mineDataList) {
+public class HistoryCodeAdapter extends BaseRecycleAdapter<HistoryCodeAdapter.MViewHolder,AllHistoryBean> {
+    public HistoryCodeAdapter(List<AllHistoryBean> mineDataList) {
         super(mineDataList);
     }
 
@@ -29,8 +30,8 @@ public class HistoryCodeAdapter extends BaseRecycleAdapter<HistoryCodeAdapter.MV
     }
 
     @Override
-    protected void onMyBindViewHolder(MViewHolder holder, int position, List<HistoryCodeBean.ItemsBean> mineDataList) {
-        HistoryCodeBean.ItemsBean itemsBean=mineDataList.get(position);
+    protected void onMyBindViewHolder(MViewHolder holder, int position, List<AllHistoryBean> mineDataList) {
+        AllHistoryBean itemsBean=mineDataList.get(position);
         String number=itemsBean.getNumbers();
         String sx=itemsBean.getSx();
         String[] numbers=number.split(",");

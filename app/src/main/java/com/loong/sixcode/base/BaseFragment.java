@@ -12,7 +12,10 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import com.loong.sixcode.R;
 
 /**
  * Created by lxl on 2017/7/7.
@@ -21,9 +24,11 @@ import android.widget.Toast;
 public class BaseFragment extends Fragment {
     private AlertDialog noCancelDialog;
     private ProgressDialog progressDialog;
+
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        loadLayout= (LinearLayout) view.findViewById(R.id.load_layout);
     }
 
     /**
@@ -50,6 +55,29 @@ public class BaseFragment extends Fragment {
      */
     public <view extends View> view getViewById(View parentView,@IdRes int  viewId){
         return (view)parentView.findViewById(viewId);
+    }
+
+    /**
+     * 显示加载的View
+     */
+    LinearLayout loadLayout;
+    public void showLoadLayout(){
+        if (loadLayout==null){
+            Toast.makeText(getActivity(), "The Fragment not have LoadLayout", Toast.LENGTH_SHORT).show();
+        } else {
+            loadLayout.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
+     * 关闭加载VIew
+     */
+    public void hiddingLoadLayout(){
+        if (loadLayout==null){
+            Toast.makeText(getActivity(), "The Fragment not have LoadLayout", Toast.LENGTH_SHORT).show();
+        } else {
+            loadLayout.setVisibility(View.GONE);
+        }
     }
 
     /**

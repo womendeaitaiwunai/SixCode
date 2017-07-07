@@ -27,6 +27,14 @@ public class BuyCodeDbDao {
         return BaseApplication.getDaoInstant().getBuyCodeDaoDao().queryBuilder().orderDesc(BuyCodeDaoDao.Properties.BuyTime).list();
     }
 
+    public static void delectAll(){
+        BaseApplication.getDaoInstant().getBuyCodeDaoDao().deleteAll();
+    }
+
+    public static void delectSomeCode(BuyCodeDao... buyCodeDaos){
+        BaseApplication.getDaoInstant().getBuyCodeDaoDao().deleteInTx(buyCodeDaos);
+    }
+
 }
 /**
  * 增加单个数据

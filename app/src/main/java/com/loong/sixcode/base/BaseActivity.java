@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.AnimRes;
 import android.support.annotation.IdRes;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -19,10 +20,20 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+
+import com.loong.sixcode.R;
+
 import java.io.File;
+
+import lecho.lib.hellocharts.model.Line;
 
 /**
  * Created by lxl on 2017/3/4.
@@ -47,7 +58,6 @@ public abstract class BaseActivity extends AppCompatActivity {
         spUser = getSharedPreferences("BitKuCheck", MODE_PRIVATE);
         editorUser = spUser.edit();
     }
-
 
     public void deleteCrach(){
         File file=BaseActivity.this.getCacheDir();
@@ -84,6 +94,30 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
     public <view extends View> view getViewById(@IdRes int  viewId){
         return (view)findViewById(viewId);
+    }
+
+    /**
+     * 显示加载的View
+     */
+    LinearLayout loadLayout;
+    public void showLoadLayout(){
+        loadLayout= (LinearLayout) findViewById(R.id.load_layout);
+        if (loadLayout==null){
+            Toast.makeText(this, "The Activity not have LoadLayout", Toast.LENGTH_SHORT).show();
+        } else {
+            loadLayout.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
+     * 关闭加载VIew
+     */
+    public void hiddingLoadLayout(){
+        if (loadLayout==null){
+            Toast.makeText(this, "The Activity not have LoadLayout", Toast.LENGTH_SHORT).show();
+        } else {
+            loadLayout.setVisibility(View.GONE);
+        }
     }
 
     /**
