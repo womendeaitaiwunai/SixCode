@@ -34,9 +34,9 @@ public class BuySomeAdapter extends BaseRecycleAdapter<BuySomeAdapter.MViewHolde
     }
 
 
-    public class MViewHolder extends RecyclerView.ViewHolder{
+    class MViewHolder extends RecyclerView.ViewHolder{
         SuperTextView someCode;
-        public MViewHolder(View itemView) {
+        MViewHolder(View itemView) {
             super(itemView);
             someCode= (SuperTextView) itemView.findViewById(R.id.code_num);
         }

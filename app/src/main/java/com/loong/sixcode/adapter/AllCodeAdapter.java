@@ -43,16 +43,6 @@ public class AllCodeAdapter extends BaseRecycleAdapter<AllCodeAdapter.MViewHolde
         holder.codeMoney.setText((mineDataList.get(position).getMoney())==0?"":(mineDataList.get(position).getMoney())+"");
         if (isEdit) holder.codeMoney.setEnabled(true);
         else holder.codeMoney.setEnabled(false);
-//        for (BuyResultBean buyResultBean:mineDataList){
-//            List<String> buyNum=buyResultBean.getBuyNum();
-//            for (String buyN:buyNum){
-//                if (TextUtils.equals(buyN,holder.codeNum.getText().toString())){
-//                    int money=Integer.parseInt(TextUtils.isEmpty(holder.codeMoney.getText().toString())
-//                            ?"0":holder.codeMoney.getText().toString());
-//                    holder.codeMoney.setText(money+(buyResultBean.getMoney()/buyNum.size())+"");
-//                }
-//            }
-//        }
     }
 
     class MViewHolder extends RecyclerView.ViewHolder{

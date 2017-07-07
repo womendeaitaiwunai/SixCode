@@ -48,11 +48,11 @@ public class BuyResultAdapter extends BaseRecycleAdapter<BuyResultAdapter.MViewH
         holder.buyResult.setText(result);
     }
 
-    public class MViewHolder extends RecyclerView.ViewHolder{
+    class MViewHolder extends RecyclerView.ViewHolder{
         TextView time;
         TextView buyResult;
         TextView allMoney;
-        public MViewHolder(View itemView) {
+        MViewHolder(View itemView) {
             super(itemView);
             time= (TextView) itemView.findViewById(R.id.time);
             buyResult= (TextView) itemView.findViewById(R.id.but_code);

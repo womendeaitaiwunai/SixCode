@@ -119,7 +119,9 @@ public class MainActivity extends BaseActivity
                 showToast("没有相应的权限");
                 finish();
             }
-        }, android.Manifest.permission.SYSTEM_ALERT_WINDOW);
+        }, android.Manifest.permission.SYSTEM_ALERT_WINDOW,
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                android.Manifest.permission.READ_EXTERNAL_STORAGE);
     }
     public void addCodeData(){
         allCodeFragment.addData();

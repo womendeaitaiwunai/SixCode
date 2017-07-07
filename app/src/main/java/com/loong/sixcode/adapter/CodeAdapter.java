@@ -32,9 +32,9 @@ public class CodeAdapter extends BaseRecycleAdapter<CodeAdapter.MViewHolder,Inte
     }
 
 
-    public class MViewHolder extends RecyclerView.ViewHolder{
+    class MViewHolder extends RecyclerView.ViewHolder{
         SuperTextView superTextView;
-        public MViewHolder(View itemView) {
+        MViewHolder(View itemView) {
             super(itemView);
             superTextView= (SuperTextView) itemView.findViewById(R.id.code_num);
         }
