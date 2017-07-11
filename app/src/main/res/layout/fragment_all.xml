@@ -34,6 +34,14 @@
             android:gravity="center"
             android:layout_gravity="center"
             android:text="历史汇总"/>
+        <TextView
+            android:id="@+id/two_code_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:text="扫描加单"/>
     </LinearLayout>
 
     <FrameLayout

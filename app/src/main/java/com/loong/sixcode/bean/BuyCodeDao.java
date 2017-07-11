@@ -20,12 +20,15 @@ public class BuyCodeDao {
 
     private Long buyTime;
 
-    @Generated(hash = 564369341)
-    public BuyCodeDao(Long id, String buyCode, int money, Long buyTime) {
+    private int type;
+
+    @Generated(hash = 161741555)
+    public BuyCodeDao(Long id, String buyCode, int money, Long buyTime, int type) {
         this.id = id;
         this.buyCode = buyCode;
         this.money = money;
         this.buyTime = buyTime;
+        this.type = type;
     }
 
     @Generated(hash = 1349843992)
@@ -63,4 +66,13 @@ public class BuyCodeDao {
     public void setBuyTime(Long buyTime) {
         this.buyTime = buyTime;
     }
+
+    public int getType() {
+        return this.type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+    
 }

@@ -9,7 +9,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
+        android:gravity="center"
         android:orientation="horizontal">
         <TextView
             android:id="@+id/float_window_title"
@@ -21,16 +21,31 @@
             android:textColor="@color/colorAccent"
             android:textSize="24sp" />
 
-        <ImageView
-            android:id="@+id/float_window_closed"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:background="@null"
-            android:contentDescription="@null"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:src="@drawable/float_closed_selector" />
+            android:layout_marginRight="8dp"
+            android:orientation="vertical"
+            android:gravity="center">
+            <ImageView
+                android:id="@+id/float_window_closed"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@null"
+                android:contentDescription="@null"
+                android:scaleType="centerInside"
+                android:src="@mipmap/delete" />
+            <ImageView
+                android:id="@+id/float_window_add"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@null"
+                android:layout_marginTop="10dp"
+                android:contentDescription="@null"
+                android:scaleType="centerInside"
+                android:src="@mipmap/add" />
+        </LinearLayout>
+
     </LinearLayout>
 
     <TextView

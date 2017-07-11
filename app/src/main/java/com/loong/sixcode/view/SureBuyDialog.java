@@ -14,9 +14,11 @@ import com.coorchice.library.SuperTextView;
 import com.loong.sixcode.R;
 import com.loong.sixcode.adapter.BuySomeAdapter;
 import com.loong.sixcode.base.BaseRecycleAdapter;
+import com.loong.sixcode.bean.BuyCodeDao;
 import com.loong.sixcode.bean.BuyResultBean;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -30,9 +32,9 @@ public class SureBuyDialog extends Dialog {
     private BuySomeAdapter adapter;
     private String buyMoney="";
     private int changePosition=-1;
-    public SureBuyDialog(Context context,List<String> buyNum,String money,int changePosition) {
+    public SureBuyDialog(Context context,String buyNum,String money,int changePosition) {
         super(context);
-        this.buyAllNum=buyNum;
+        this.buyAllNum=Arrays.asList(buyNum.split("、"));
         this.buyMoney=money;
         this.changePosition=changePosition;
         initDialogView();
@@ -43,7 +45,7 @@ public class SureBuyDialog extends Dialog {
         LinearLayoutManager manager=new LinearLayoutManager(this.getContext());
         manager.setOrientation(LinearLayoutManager.HORIZONTAL);
         buyDialogRecycle.setLayoutManager(manager);
-        buyDialogRecycle.smoothScrollToPosition(buyNum.size());
+        buyDialogRecycle.smoothScrollToPosition(buyAllNum.size());
         buyDialogRecycle.setAdapter(adapter);
 
         adapter.setOnItemViewLongClickListener(new BaseRecycleAdapter.OnItemViewLongClickListener<String>() {
@@ -159,15 +161,18 @@ public class SureBuyDialog extends Dialog {
                     Toast.makeText(getContext(), "金额输入有误", Toast.LENGTH_SHORT).show();
                 }
                 if (mMoney==0) return;
-                BuyResultBean buyResultBean=new BuyResultBean();
-                List<String> buyNum=new ArrayList<>();
-                buyNum.addAll(buyAllNum);
-                buyResultBean.setBuyNum(buyNum);
-                buyResultBean.setMoney(mMoney*buyNum.size());
-                buyResultBean.setTime(System.currentTimeMillis());
+                BuyCodeDao buyResultBean=new BuyCodeDao();
+                String BuySomeNum="";
+                for (String somBuyNum:buyAllNum){
+                    BuySomeNum=BuySomeNum+somBuyNum+"、";
+                }
+               if (BuySomeNum.endsWith("、")) BuySomeNum=BuySomeNum.substring(0,BuySomeNum.length()-1);
+                buyResultBean.setBuyCode(BuySomeNum);
+                buyResultBean.setMoney(mMoney*buyAllNum.size());
+                buyResultBean.setBuyTime(System.currentTimeMillis());
                 if (buyResultCallBack!=null) {
                     buyResultCallBack.resultBack(buyResultBean,changePosition);
-                    buyDialogRecycle.smoothScrollToPosition(buyNum.size());
+                    buyDialogRecycle.smoothScrollToPosition(buyAllNum.size());
                 }
                 SureBuyDialog.this.dismiss();
 //                buyResultAdapter.addItemView(buyResultBean);
@@ -192,6 +197,6 @@ public class SureBuyDialog extends Dialog {
     }
 
     public interface BuyResultCallBack{
-        void resultBack(BuyResultBean buyResultBean,int position);
+        void resultBack(BuyCodeDao buyResultBean, int position);
     }
 }

@@ -4,14 +4,15 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,21 +21,24 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.loong.sixcode.HistoryBuyActivity;
+import com.loong.rsac.SixCodeUtil;
+import com.loong.sixcode.activity.HistoryBuyActivity;
 import com.loong.sixcode.MainActivity;
 import com.loong.sixcode.R;
 import com.loong.sixcode.adapter.BuyResultAdapter;
 import com.loong.sixcode.adapter.BuySomeAdapter;
 import com.loong.sixcode.adapter.CodeAdapter;
+import com.loong.sixcode.base.BaseFragment;
 import com.loong.sixcode.base.BaseRecycleAdapter;
 import com.loong.sixcode.bean.BuyCodeDao;
-import com.loong.sixcode.bean.BuyResultBean;
 import com.loong.sixcode.greendao.BuyCodeDbDao;
 import com.loong.sixcode.util.Base64Utils;
+import com.loong.sixcode.util.QRCodeUtil;
 import com.loong.sixcode.util.RSAUtils;
 import com.loong.sixcode.view.Sneaker;
 import com.loong.sixcode.view.SureBuyDialog;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +47,7 @@ import java.util.List;
  * 购买码页面
  */
 
-public class BuyCodeFragment extends Fragment implements View.OnClickListener{
+public class BuyCodeFragment extends BaseFragment implements View.OnClickListener{
     private RecyclerView codeRecycle,resultRecycle,someRecycle;
     private BuyResultAdapter buyResultAdapter;
     private BuySomeAdapter buySomeAdapter;
@@ -100,8 +104,8 @@ public class BuyCodeFragment extends Fragment implements View.OnClickListener{
         someRecycle.setLayoutManager(layoutManager);
         someRecycle.setAdapter(buySomeAdapter);
 
-        List<BuyResultBean> buyResultBeenList=new ArrayList<>();
-        buyResultAdapter=new BuyResultAdapter(buyResultBeenList);
+        List<BuyCodeDao> buyResultBeenList=new ArrayList<>();
+        buyResultAdapter=new BuyResultAdapter(buyResultBeenList,false);
         LinearLayoutManager manager1=new LinearLayoutManager(getActivity());
         manager1.setOrientation(LinearLayoutManager.VERTICAL);
         resultRecycle.setLayoutManager(manager1);
@@ -110,9 +114,7 @@ public class BuyCodeFragment extends Fragment implements View.OnClickListener{
         codeAdapter.setOnItemViewClickListener(new BaseRecycleAdapter.OnItemViewClickListener<Integer>() {
             @Override
             public void itemViewClick(Integer integer,int position) {
-                List<String> result=new ArrayList<>();
-                result.add(integer+"");
-                if (isSingle) showSingeBuyDialog(result,"",-1);
+                if (isSingle) showSingeBuyDialog(integer+"","",-1);
                 else {
                     buySomeAdapter.addItemView(integer+"",false);
                     someRecycle.smoothScrollToPosition(buySomeAdapter.getItemCount());
@@ -128,18 +130,18 @@ public class BuyCodeFragment extends Fragment implements View.OnClickListener{
         });
 
 
-        buyResultAdapter.setOnViewClickListener(new BaseRecycleAdapter.OnViewClickListener<BuyResultBean>() {
+        buyResultAdapter.setOnViewClickListener(new BaseRecycleAdapter.OnViewClickListener<BuyCodeDao>() {
             @Override
-            public void viewClick(BuyResultBean buyResultBean, int clickId, int position) {
+            public void viewClick(BuyCodeDao buyResultBean, int clickId, int position) {
                 if (clickId==R.id.change_result){
-                    showSingeBuyDialog(buyResultBean.getBuyNum(),(buyResultBean.getMoney()/buyResultBean.getBuyNum().size())+"",position);
+                    showSingeBuyDialog(buyResultBean.getBuyCode(),(buyResultBean.getMoney()/buyResultBean.getBuyCode().split("、").length)+"",position);
                 }
             }
         });
 
-        buyResultAdapter.setOnItemViewLongClickListener(new BaseRecycleAdapter.OnItemViewLongClickListener<BuyResultBean>() {
+        buyResultAdapter.setOnItemViewLongClickListener(new BaseRecycleAdapter.OnItemViewLongClickListener<BuyCodeDao>() {
             @Override
-            public void itemLongViewClick(BuyResultBean buyResultBean, final int position) {
+            public void itemLongViewClick(BuyCodeDao buyResultBean, final int position) {
                 AlertDialog.Builder builder=new AlertDialog.Builder(getActivity());
                 builder.setMessage("是否删除这条记录");
                 builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -164,11 +166,11 @@ public class BuyCodeFragment extends Fragment implements View.OnClickListener{
     /**
      * 选择购买的弹框
      */
-    private void showSingeBuyDialog(List<String> sureResult,String money,int changePosition){
+    private void showSingeBuyDialog(String sureResult,String money,int changePosition){
         SureBuyDialog sureBuyDialog=new SureBuyDialog(getActivity(),sureResult,money,changePosition);
         sureBuyDialog.setBuyResultCallBack(new SureBuyDialog.BuyResultCallBack() {
             @Override
-            public void resultBack(BuyResultBean buyResultBean,int changePosition) {
+            public void resultBack(BuyCodeDao buyResultBean,int changePosition) {
                 if (changePosition==-1) buyResultAdapter.addItemView(buyResultBean,true);
                 else buyResultAdapter.changeDataByPosition(changePosition,buyResultBean);
                 resultRecycle.smoothScrollToPosition(buyResultAdapter.getItemCount());
@@ -178,12 +180,9 @@ public class BuyCodeFragment extends Fragment implements View.OnClickListener{
         sureBuyDialog.show();
     }
 
-    private void showBuySneaker(BuyResultBean buyResultBean){
-        int resultBuyNum=buyResultBean.getBuyNum().size();
-        String result="";
-        for (int i = 0; i <resultBuyNum; i++) {
-            result=result+buyResultBean.getBuyNum().get(i)+"、";
-        }
+    private void showBuySneaker(BuyCodeDao buyResultBean){
+        int resultBuyNum=buyResultBean.getBuyCode().split("、").length;
+        String result=buyResultBean.getBuyCode();
         if (result.endsWith("、")) result=result.substring(0,result.length()-1);
         if (resultBuyNum>1) result=result+"/各"+(buyResultBean.getMoney()/resultBuyNum)+"块";
         else result=result+"/"+buyResultBean.getMoney()+"块";
@@ -198,7 +197,13 @@ public class BuyCodeFragment extends Fragment implements View.OnClickListener{
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.some_sure:
-                if (buySomeAdapter.getItemCount()!=0) showSingeBuyDialog(buySomeAdapter.getAllData(),"",-1);
+                String buyNum="";
+                List<String> buyList=buySomeAdapter.getAllData();
+                for (String buyData:buyList){
+                    buyNum=buyNum+buyData+"、";
+                }
+                if (buyNum.endsWith("、")) buyNum=buyNum.substring(0,buyNum.length());
+                if (buySomeAdapter.getItemCount()!=0) showSingeBuyDialog(buyNum,"",-1);
                 buySomeAdapter.cleanView();
                 break;
             case R.id.some_canal:
@@ -209,30 +214,44 @@ public class BuyCodeFragment extends Fragment implements View.OnClickListener{
                 break;
             case R.id.first_show:
                 ((MainActivity)getActivity()).showProgressDialog("正在提交数据...");
-                List<BuyResultBean> buyResultBeanList = buyResultAdapter.getAllData();
-                for (BuyResultBean buyResultBean:buyResultBeanList){
-                    String buyAllCode="";
-                    for (String buyCode:buyResultBean.getBuyNum()){
-                        buyAllCode=buyAllCode+buyCode+"、";
-                    }
-                    if (TextUtils.isEmpty(buyAllCode)) return;
-                    if (buyAllCode.endsWith("、")) buyAllCode=buyAllCode.substring(0,buyAllCode.length()-1);
-                    BuyCodeDao buyCodeDao=new BuyCodeDao();
-                    buyCodeDao.setBuyCode(buyAllCode);
-                    buyCodeDao.setBuyTime(buyResultBean.getTime());
-                    buyCodeDao.setMoney(buyResultBean.getMoney());
-                    BuyCodeDbDao.insertBuyCode(buyCodeDao);
+                List<BuyCodeDao> buyResultBeanList = buyResultAdapter.getAllData();
+                for (BuyCodeDao buyResultBean:buyResultBeanList){
+                    BuyCodeDbDao.insertBuyCode(buyResultBean);
                 }
                 ((MainActivity)getActivity()).addCodeData();
                 Toast.makeText(getActivity(), "数据增加成功", Toast.LENGTH_SHORT).show();
                 buyResultAdapter.cleanView();
                 ((MainActivity)getActivity()).hideProgressDialog();
 
-//                Gson gson=new Gson();
-//                String jsonString=gson.toJson(buyResultBeanList);
-//                String jiamiString=jiaMi(jsonString);
-//                copy(jiamiString,getActivity());
+                Gson gson=new Gson();
+                String jsonString=gson.toJson(buyResultBeanList);
+                Log.i("要加密字段",jsonString);
+                String jiamiString=jiaMi(jsonString);
+                Log.i("加密",jiamiString);
+                copy(jiamiString,getActivity());
+
+                new CreateQRCode().execute(jiamiString);
                 break;
+        }
+    }
+
+    public class CreateQRCode extends AsyncTask<String,Void,Boolean> {
+        @Override
+        protected void onPreExecute() {
+            showProgressDialog("正在准备生成订单图片");
+        }
+        @Override
+        protected Boolean doInBackground(String... params) {
+            boolean result= QRCodeUtil.createQRImage(params[0],500,500,null,
+                    Environment.getExternalStorageDirectory().getAbsolutePath()+ File.separator+"sixCode.jpg");
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            hideProgressDialog();
+            if (aBoolean) Toast.makeText(getActivity(), "生成订单图片成功", Toast.LENGTH_SHORT).show();
+            else Toast.makeText(getActivity(), "生成订单图片失败", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -249,12 +268,7 @@ public class BuyCodeFragment extends Fragment implements View.OnClickListener{
     }
 
     private String jiaMi(String jiami){
-        String publicString="MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA869kB6Y2xwtokIFkblehG4jOiVfI325D" +
-                "vbsDbdYTa4QImwJVPJQ9sbMspwJY7EmZZVdTAmrqXO+PmS2ZPNHQ9gEnX2oDQp6GMMsrEIiBTdg6" +
-                "mjbJgn63/AbbB1t640EOjR160SiD+iqQA5tKTZvshQYq2owxFH8JSgMhDOI5WqgW4gCuVZok+Dfk" +
-                "fbyS1hrmpMfKe6c1pVG8PWhOv7AHdPBZaOSpOqSfBGU0iUXUCO9KFg+Sp72FgqCJXNF1p4s0yGE9" +
-                "B5Eid9yNXB27NkmVOwXxhzPXNfXjVHr2tXqzhZdoknNFIOxAGeYvhnihrfpRqvibZ85U67DzkO2E" +
-                "VHfhAQIDAQAB";
+        String publicString=new SixCodeUtil().getJS(getActivity());
         String result="";
         try {
             result= Base64Utils.encode(RSAUtils.encryptData(jiami.getBytes(),RSAUtils.loadPublicKey(publicString)));

@@ -2,7 +2,6 @@ package com.loong.sixcode.fragment;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -16,7 +15,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.loong.sixcode.HistoryBuyActivity;
+import com.loong.sixcode.activity.BigHistoryActivity;
+import com.loong.sixcode.activity.CodeCameraActivity;
+import com.loong.sixcode.activity.HistoryBuyActivity;
 import com.loong.sixcode.R;
 import com.loong.sixcode.adapter.AllCodeAdapter;
 import com.loong.sixcode.bean.BuyCodeDao;
@@ -34,9 +35,7 @@ import lecho.lib.hellocharts.model.Axis;
 import lecho.lib.hellocharts.model.AxisValue;
 import lecho.lib.hellocharts.model.Column;
 import lecho.lib.hellocharts.model.ColumnChartData;
-import lecho.lib.hellocharts.model.Line;
 import lecho.lib.hellocharts.model.SubcolumnValue;
-import lecho.lib.hellocharts.model.Viewport;
 import lecho.lib.hellocharts.util.ChartUtils;
 import lecho.lib.hellocharts.view.ColumnChartView;
 
@@ -95,6 +94,7 @@ public class AllCodeFragment extends Fragment implements View.OnClickListener{
         dataType= (Spinner) view.findViewById(R.id.data_type);
         view.findViewById(R.id.edit_all_code).setOnClickListener(this);
         view.findViewById(R.id.history_buy).setOnClickListener(this);
+        view.findViewById(R.id.two_code_add).setOnClickListener(this);
     }
 
 
@@ -210,6 +210,10 @@ public class AllCodeFragment extends Fragment implements View.OnClickListener{
                 break;
             case R.id.history_buy:
                 startActivity(new Intent(getActivity(), HistoryBuyActivity.class));
+                break;
+            case R.id.two_code_add:
+                //startActivity(new Intent(getActivity(), CodeCameraActivity.class));
+                startActivity(new Intent(getActivity(), BigHistoryActivity.class));
                 break;
         }
     }

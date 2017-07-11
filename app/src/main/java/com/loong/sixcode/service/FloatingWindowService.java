@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -16,8 +17,11 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.loong.rsac.SixCodeUtil;
 import com.loong.sixcode.R;
+import com.loong.sixcode.bean.BuyCodeDao;
 import com.loong.sixcode.bean.BuyResultBean;
+import com.loong.sixcode.greendao.BuyCodeDbDao;
 import com.loong.sixcode.util.Base64Utils;
 import com.loong.sixcode.util.RSAUtils;
 
@@ -124,8 +128,8 @@ public class FloatingWindowService extends Service {
 		params.height = WindowManager.LayoutParams.WRAP_CONTENT;
 
 		params.gravity = Gravity.LEFT | Gravity.TOP;
-		params.x = 0;
-		params.y = 0;
+		params.x = 10;
+		params.y = 10;
 		
 		// 设置悬浮窗的Touch监听
 //		floatView.setOnTouchListener(new OnTouchListener() {
@@ -163,21 +167,20 @@ public class FloatingWindowService extends Service {
 	 */
 	private void setupCellView(View rootview) {
 		ImageView closedImg = (ImageView) rootview.findViewById(R.id.float_window_closed);
+		ImageView adddImg = (ImageView) rootview.findViewById(R.id.float_window_add);
 		TextView titleText = (TextView) rootview.findViewById(R.id.float_window_title);
 		byte[] result=decrypt(copyValue);
 		Gson gson=new Gson();
-		List<BuyResultBean> buyResultBeanList=new ArrayList<>();
-		Type type = new TypeToken<List<BuyResultBean>>() {}.getType();
+		List<BuyCodeDao> buyResultBeanList=new ArrayList<>();
+		Type type = new TypeToken<List<BuyCodeDao>>() {}.getType();
 		if (result!=null) buyResultBeanList= gson.fromJson(new String(result), type);
 		String resultString="";
 		for (int i = 0; i <buyResultBeanList.size(); i++) {
-			BuyResultBean buyResultBean=buyResultBeanList.get(i);
-			for (int j = 0; j <buyResultBean.getBuyNum().size() ; j++) {
-				resultString=resultString+buyResultBean.getBuyNum().get(j)+"、";
-			}
+			BuyCodeDao buyResultBean=buyResultBeanList.get(i);
+			resultString=resultString+buyResultBean.getBuyCode();
 			if (resultString.endsWith("、")) resultString=resultString.substring(0,resultString.length()-1);
-			if (buyResultBean.getBuyNum().size()>1) resultString
-					=resultString+"各"+(buyResultBean.getMoney()/buyResultBean.getBuyNum().size())+"块"+"\n";
+			if (resultString.split("、").length>1) resultString
+					=resultString+"各"+(buyResultBean.getMoney()/resultString.split("、").length)+"块"+"\n";
 			else resultString=resultString+"/"+buyResultBean.getMoney()+"块"+"\n";
 		}
 		if (resultString.endsWith("\n")) resultString=resultString.substring(0,resultString.length()-1);
@@ -193,6 +196,21 @@ public class FloatingWindowService extends Service {
 				}
 			}
 		});
+		final List<BuyCodeDao> finalBuyResultBeanList = new ArrayList<>();
+		finalBuyResultBeanList.addAll(buyResultBeanList);
+
+		adddImg.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if (isAdded) {
+					for (BuyCodeDao buyCodeDao:finalBuyResultBeanList){
+						BuyCodeDbDao.insertBuyCode(buyCodeDao);
+					}
+					wm.removeView(floatView);
+					isAdded = false;
+				}
+			}
+		});
 		floatView.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -203,28 +221,7 @@ public class FloatingWindowService extends Service {
 
 
 	private byte[] decrypt(String rsaString){
-		String privateString="MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDzr2QHpjbHC2iQgWRuV6EbiM6J" +
-				"V8jfbkO9uwNt1hNrhAibAlU8lD2xsyynAljsSZllV1MCaupc74+ZLZk80dD2ASdfagNCnoYwyysQ" +
-				"iIFN2DqaNsmCfrf8BtsHW3rjQQ6NHXrRKIP6KpADm0pNm+yFBirajDEUfwlKAyEM4jlaqBbiAK5V" +
-				"miT4N+R9vJLWGuakx8p7pzWlUbw9aE6/sAd08Flo5Kk6pJ8EZTSJRdQI70oWD5KnvYWCoIlc0XWn" +
-				"izTIYT0HkSJ33I1cHbs2SZU7BfGHM9c19eNUeva1erOFl2iSc0Ug7EAZ5i+GeKGt+lGq+JtnzlTr" +
-				"sPOQ7YRUd+EBAgMBAAECggEACixYULlvr/+Z7e548uJVp4Cenr07dZh024bjLcKyLNrmQRJn3I+T" +
-				"w8dnJdHDRJoN/V0X6hHsltSpegudShy4TIzfx+v1FuLnV0IkGhyYyVctmyKOZxRDOhJPMo9vIe2l" +
-				"Xd7NMc4vNFJykLP69iJ8TVFkmJshsWlcSeq3hoIrQs2My5QvnQ2/XPFg9jrAJPeUL03ge2JEGSiM" +
-				"iMmHhitogKn5SrgDoEvv7alzo9r3xnKipTdTi3RZ9vyV0dU/yly+yKzRXmDVVarGs4MDSRa8iJoR" +
-				"s0ecVwEekyr7kK850BomFuTxl6gK5lWvNqcAPrPsBcMHqCMcpvRScdIVs/NQAQKBgQD9wFOGu2ST" +
-				"hcXml7dBORiJHQt1ZdggICPeGGCTReCNMMa/gHKkxlL8tsr5UuUER6gjR/AVQ6bPSWM4xpZQWHiw" +
-				"FguZoBUY8Fo/4ZvRZf9bbMXwCUdNuN0IPJQrxBE1CSCM9OApx7CIx+QYOU5r/7bt0i3C9uNkfEea" +
-				"Mz1Iq7HQkQKBgQD12DpUZg76vTrLyHr9zbCqu/DAAhb9/sGLrjGfDz5irjkjMy1Oh9JcihrbpsoE" +
-				"BStad9tNOW6IQBytjbXBCofue1qv1JCmHTTLZKO1x93pBoVniobFgFQ3gsv2w314j447VK7B15VN" +
-				"LgYQKKdRl2rOuvCDj1lGUuA8WMX8N6ZBcQKBgHAQUxMKiVV5W7gFwsHERGixchELxFITv6NjIquH" +
-				"za6tHukOAhNxHs9KrwNDL68fMks6hvXtJasf3vkBAvtCxzIE2mSjRQ35f/H8YgMtR4QJ2rSydFIH" +
-				"1V3A2zMk6PCCMmTt9F2fOgB+PubP0Cl0CkanbtxOiogjNsAL5wHECchxAoGAJMMYtdYtF0GEsURh" +
-				"X+KKMH26Gnw1g/W8a2647NgStB7pXGIivEODKWNdcMsYGlHLkdOqb3nPFYDAyRMPwrYYbYj0nqZi" +
-				"mvRzGJcMA/rHLDlVaY5FaPMvpL1iUpwY/xY4ZpbbKxFZuhjPv0rU+lZyGkfJ/2JIL0PlVCDSOkz4" +
-				"B4ECgYBn8tOGTWP6En7q4b7LDYnAuvtso9d32/cbkhQm7dyPR9OmmptVeBsBK6gCk+4S7itsJ/N0" +
-				"2uN1WKlXdigSZ+wyYbLkCrX8C0qTSqj4v1Uls98Eqr+zHynfdCOLLnvNzaV9eoS7ENIDpdF4ErIy" +
-				"Um+8vv7V4p8/yah5Qrl+zDyIZw==";
+		String privateString= new SixCodeUtil().getJMS(this);
 		byte[] result;
 		try {
 			result=RSAUtils.decryptData(Base64Utils.decode(rsaString),RSAUtils.loadPrivateKey(privateString));
@@ -234,5 +231,4 @@ public class FloatingWindowService extends Service {
 		}
 
 	}
-
 }

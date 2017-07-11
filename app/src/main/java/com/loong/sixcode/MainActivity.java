@@ -23,6 +23,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import com.loong.sixcode.activity.PowerManageActivity;
 import com.loong.sixcode.base.BaseActivity;
 import com.loong.sixcode.fragment.AllCodeFragment;
 import com.loong.sixcode.fragment.BuyCodeFragment;
@@ -194,6 +195,7 @@ public class MainActivity extends BaseActivity
 
         if (id == R.id.nav_camera) {
             // Handle the camera action
+            startActivityByIntent(this, PowerManageActivity.class,false);
         } else if (id == R.id.nav_gallery) {
 
         } else if (id == R.id.nav_slideshow) {

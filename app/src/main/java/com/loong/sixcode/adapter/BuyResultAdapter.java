@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.loong.sixcode.R;
 import com.loong.sixcode.base.BaseRecycleAdapter;
+import com.loong.sixcode.bean.BuyCodeDao;
 import com.loong.sixcode.bean.BuyResultBean;
 
 import java.text.SimpleDateFormat;
@@ -17,9 +18,11 @@ import java.util.List;
  * Created by lxl on 2017/6/10.
  */
 
-public class BuyResultAdapter extends BaseRecycleAdapter<BuyResultAdapter.MViewHolder,BuyResultBean> {
-    public BuyResultAdapter(List<BuyResultBean> buyResultBeenList){
+public class BuyResultAdapter extends BaseRecycleAdapter<BuyResultAdapter.MViewHolder,BuyCodeDao> {
+    private boolean goneEdit;
+    public BuyResultAdapter(List<BuyCodeDao> buyResultBeenList,boolean goneEdit){
         super(buyResultBeenList);
+        this.goneEdit=goneEdit;
     }
 
     @Override
@@ -30,22 +33,23 @@ public class BuyResultAdapter extends BaseRecycleAdapter<BuyResultAdapter.MViewH
     }
 
     @Override
-    protected void onMyBindViewHolder(MViewHolder holder, int position, List<BuyResultBean> mineDataList) {
-        long timeData=mineDataList.get(position).getTime();
+    protected void onMyBindViewHolder(MViewHolder holder, int position, List<BuyCodeDao> mineDataList) {
+        long timeData=mineDataList.get(position).getBuyTime();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH时mm分ss秒");
         String time=sdf.format(timeData);
         holder.time.setText(time);
 
-        BuyResultBean resultBean=mineDataList.get(position);
+        BuyCodeDao resultBean=mineDataList.get(position);
         holder.allMoney.setText(resultBean.getMoney()+0+"块");
-        int resultBuyNum=resultBean.getBuyNum().size();
-        String result="";
-        for (int i = 0; i <resultBuyNum; i++) {
-            result=result+resultBean.getBuyNum().get(i)+"、";
-        }
+        String resultBuyString=resultBean.getBuyCode();
+        String[] nums=resultBuyString.split("、");
+        int resultBuyNum=nums.length;
+        String result=resultBean.getBuyCode();
         if (result.endsWith("、")) result=result.substring(0,result.length()-1);
         if (resultBuyNum>1) result=result+"各"+(resultBean.getMoney()/resultBuyNum)+"块";
+        else result=result+" 号";
         holder.buyResult.setText(result);
+        if (goneEdit) holder.itemView.findViewById(R.id.change_result).setVisibility(View.GONE);
     }
 
     class MViewHolder extends RecyclerView.ViewHolder{

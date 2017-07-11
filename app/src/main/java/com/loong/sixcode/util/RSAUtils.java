@@ -1,5 +1,6 @@
 package com.loong.sixcode.util;
 
+import java.io.ByteArrayOutputStream;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -19,6 +20,7 @@ import javax.crypto.Cipher;
 public final class RSAUtils
 {
 	private static String RSA = getSRA();
+	private static int keyLength=2048;
 
 	private static String getSRA(){
 		byte[] bytes={82,83,65};
@@ -31,7 +33,7 @@ public final class RSAUtils
 	 */
 	public static KeyPair generateRSAKeyPair()
 	{
-		return generateRSAKeyPair(2048);
+		return generateRSAKeyPair(keyLength);
 	}
 
 	/**
@@ -61,15 +63,29 @@ public final class RSAUtils
 	 *            需加密数据的byte数据
 	 * @return 加密后的byte型数据
 	 */
-	public static byte[] encryptData(byte[] data, PublicKey publicKey) {
-		try {
-			Cipher cipher = Cipher.getInstance("RSA/None/PKCS1Padding");
-			cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-			return cipher.doFinal(data);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
+	public static byte[] encryptData(byte[] data, PublicKey publicKey) throws Exception {
+
+		Cipher cipher = Cipher.getInstance("RSA/None/PKCS1Padding");
+		cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+		int inputLen = data.length;
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		int offSet = 0;
+
+		for(int i = 0; inputLen - offSet > 0; offSet = i * 244) {
+			byte[] cache;
+			if(inputLen - offSet > 244) {
+				cache = cipher.doFinal(data, offSet, 244);
+			} else {
+				cache = cipher.doFinal(data, offSet, inputLen - offSet);
+			}
+
+			out.write(cache, 0, cache.length);
+			++i;
 		}
+
+		byte[] encryptedData = out.toByteArray();
+		out.close();
+		return encryptedData;
 	}
 
 	/**
@@ -81,14 +97,28 @@ public final class RSAUtils
 	 *            私钥
 	 * @return
 	 */
-	public static byte[] decryptData(byte[] encryptedData, PrivateKey privateKey) {
-		try {
-			Cipher cipher = Cipher.getInstance("RSA/None/PKCS1Padding");
-			cipher.init(Cipher.DECRYPT_MODE, privateKey);
-			return cipher.doFinal(encryptedData);
-		} catch (Exception e) {
-			return null;
+	public static byte[] decryptData(byte[] encryptedData, PrivateKey privateKey) throws Exception{
+		Cipher cipher = Cipher.getInstance("RSA/None/PKCS1Padding");
+		cipher.init(Cipher.DECRYPT_MODE, privateKey);
+		int inputLen = encryptedData.length;
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		int offSet = 0;
+
+		for(int i = 0; inputLen - offSet > 0; offSet = i * 256) {
+			byte[] cache;
+			if(inputLen - offSet > 256) {
+				cache = cipher.doFinal(encryptedData, offSet, 256);
+			} else {
+				cache = cipher.doFinal(encryptedData, offSet, inputLen - offSet);
+			}
+
+			out.write(cache, 0, cache.length);
+			++i;
 		}
+
+		byte[] decryptedData = out.toByteArray();
+		out.close();
+		return decryptedData;
 	}
 
 	/**

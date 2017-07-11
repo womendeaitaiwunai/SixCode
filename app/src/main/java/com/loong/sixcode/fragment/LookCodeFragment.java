@@ -93,9 +93,14 @@ public class LookCodeFragment extends Fragment implements View.OnClickListener{
                 menu.setVisibility(View.VISIBLE);
                 menuViewSmall.setVisibility(View.GONE);
                 otherView.setVisibility(View.VISIBLE);
-                FragmentTransaction ft=fm.beginTransaction();
-                ft.replace(R.id.other_view,showFragment);
-                ft.commit();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        FragmentTransaction ft=fm.beginTransaction();
+                        ft.replace(R.id.other_view,showFragment);
+                        ft.commit();
+                    }
+                }).start();
             }
             @Override
             public void onAnimationCancel(Animator animation) {}

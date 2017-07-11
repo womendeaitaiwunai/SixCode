@@ -14,10 +14,10 @@ public class BuyCodeDbDao {
     /**
      * 添加数据，如果有重复则覆盖
      *
-     * @param shop
+     * @param buyCodeDao
      */
-    public static void insertBuyCode(BuyCodeDao shop) {
-        BaseApplication.getDaoInstant().getBuyCodeDaoDao().insert(shop);
+    public static void insertBuyCode(BuyCodeDao buyCodeDao) {
+        BaseApplication.getDaoInstant().getBuyCodeDaoDao().insert(buyCodeDao);
     }
 
     /**
