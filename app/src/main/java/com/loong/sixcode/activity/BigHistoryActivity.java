@@ -57,6 +57,7 @@ public class BigHistoryActivity extends BaseActivity{
         List<String> dataTypeData=new ArrayList<>();
         dataTypeData.add("按号码排序");
         dataTypeData.add("按金额排序");
+
         ArrayAdapter dataAdapter = new ArrayAdapter<>(this,android.R.layout.simple_spinner_item,dataTypeData);
         //设置下拉列表的风格
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
