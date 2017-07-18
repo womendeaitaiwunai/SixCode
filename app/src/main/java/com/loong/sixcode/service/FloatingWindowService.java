@@ -204,7 +204,9 @@ public class FloatingWindowService extends Service {
 			public void onClick(View v) {
 				if (isAdded) {
 					for (BuyCodeDao buyCodeDao:finalBuyResultBeanList){
+						buyCodeDao.setId(null);
 						BuyCodeDbDao.insertBuyCode(buyCodeDao);
+						sendBroadcast(new Intent("UpdateAllCode"));
 					}
 					wm.removeView(floatView);
 					isAdded = false;

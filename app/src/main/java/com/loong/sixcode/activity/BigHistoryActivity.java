@@ -72,7 +72,7 @@ public class BigHistoryActivity extends BaseActivity{
         findViewById(R.id.out_scn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                finish();
             }
         });
     }

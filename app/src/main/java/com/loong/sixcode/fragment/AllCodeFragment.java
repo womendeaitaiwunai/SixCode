@@ -1,6 +1,9 @@
 package com.loong.sixcode.fragment;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -59,6 +62,7 @@ public class AllCodeFragment extends Fragment implements View.OnClickListener{
     private List<Integer> mineResult=new ArrayList<>();
     private List<CodeBean> codeBeanList=new ArrayList<>();
     private List<CodeBean> mCodeBean;
+    private UpdateViewReceiver updateViewReceiver;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -88,11 +92,6 @@ public class AllCodeFragment extends Fragment implements View.OnClickListener{
         super.onViewCreated(view, savedInstanceState);
         initView(view);
         initData();
-    }
-
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-       if (!hidden) refreshView();
     }
 
     private void initView(View view) {
@@ -144,6 +143,22 @@ public class AllCodeFragment extends Fragment implements View.OnClickListener{
         //设置默认值
         dataType.setVisibility(View.VISIBLE);
         addData();
+        updateViewReceiver=new UpdateViewReceiver();
+        IntentFilter intentFilter=new IntentFilter("UpdateAllCode");
+        getActivity().registerReceiver(updateViewReceiver,intentFilter);
+    }
+
+    private class UpdateViewReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            addData();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getActivity().unregisterReceiver(updateViewReceiver);
     }
 
     //使用数组形式操作
@@ -179,12 +194,6 @@ public class AllCodeFragment extends Fragment implements View.OnClickListener{
             initChartView();
         }
         public void onNothingSelected(AdapterView<?> arg0) {}
-    }
-
-    public void refreshView(){
-        adapter.cleanView();
-        adapter.addSomeItemView(codeBeanList);
-        initChartView();
     }
 
     public void addData(){

@@ -102,7 +102,7 @@ public class MainActivity extends BaseActivity
             @Override
             public void onPageSelected(int position) {
                 if (position==2){
-                    allCodeFragment.refreshView();
+                    allCodeFragment.addData();
                     viewPager.setScroll(false);
                 }else {
                     viewPager.setScroll(true);
