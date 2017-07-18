@@ -20,17 +20,23 @@
             android:id="@+id/edit_all_code"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:padding="10dp"
+            android:padding="5dp"
             android:layout_weight="1"
             android:gravity="center"
             android:visibility="invisible"
             android:text="编辑"/>
+        <ImageView
+            android:id="@+id/all_scn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:src="@mipmap/all_scn"/>
 
         <TextView
             android:id="@+id/history_buy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="10dp"
+            android:padding="5dp"
             android:gravity="center"
             android:layout_gravity="center"
             android:text="历史汇总"/>
@@ -38,7 +44,7 @@
             android:id="@+id/two_code_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="10dp"
+            android:padding="5dp"
             android:gravity="center"
             android:layout_gravity="center"
             android:text="扫描加单"/>
@@ -58,14 +64,66 @@
             android:layout_height="match_parent"
             android:visibility="gone"
             android:layout_marginBottom="50dp"/>
+        <LinearLayout
+            android:id="@+id/money_and_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="20dp"
+            android:visibility="gone"
+            android:layout_gravity="right">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:text="号码:"/>
+                <TextView
+                    android:id="@+id/code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:text="35号"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="16sp"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:text="金额:"/>
+                <TextView
+                    android:id="@+id/money"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:text="100块"/>
+            </LinearLayout>
+        </LinearLayout>
         <TextView
             android:id="@+id/all_code_commit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:gravity="center"
-            android:layout_gravity="bottom"
             android:visibility="gone"
+            android:layout_gravity="bottom"
             android:background="#cccccc"
             android:text="提交"/>
     </FrameLayout>

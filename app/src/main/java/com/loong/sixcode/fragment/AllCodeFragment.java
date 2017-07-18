@@ -6,13 +6,17 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.loong.sixcode.activity.BigHistoryActivity;
@@ -49,8 +53,12 @@ public class AllCodeFragment extends Fragment implements View.OnClickListener{
     private RecyclerView recyclerView;
     private ColumnChartView columnChartView;
     private Spinner viewType,dataType;
+    private TextView money,code;
+    private LinearLayout moneyAndCode;
+    private ImageView allScn;
     private List<Integer> mineResult=new ArrayList<>();
     private List<CodeBean> codeBeanList=new ArrayList<>();
+    private List<CodeBean> mCodeBean;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -92,9 +100,14 @@ public class AllCodeFragment extends Fragment implements View.OnClickListener{
         columnChartView= (ColumnChartView) view.findViewById(R.id.column_chart);
         viewType= (Spinner) view.findViewById(R.id.view_type);
         dataType= (Spinner) view.findViewById(R.id.data_type);
+        money= (TextView) view.findViewById(R.id.money);
+        code= (TextView) view.findViewById(R.id.code);
+        allScn= (ImageView) view.findViewById(R.id.all_scn);
+        moneyAndCode= (LinearLayout) view.findViewById(R.id.money_and_code);
         view.findViewById(R.id.edit_all_code).setOnClickListener(this);
         view.findViewById(R.id.history_buy).setOnClickListener(this);
         view.findViewById(R.id.two_code_add).setOnClickListener(this);
+        view.findViewById(R.id.all_scn).setOnClickListener(this);
     }
 
 
@@ -130,6 +143,7 @@ public class AllCodeFragment extends Fragment implements View.OnClickListener{
         dataType.setOnItemSelectedListener(new SpinnerSelectedListener(false));
         //设置默认值
         dataType.setVisibility(View.VISIBLE);
+        addData();
     }
 
     //使用数组形式操作
@@ -140,13 +154,16 @@ public class AllCodeFragment extends Fragment implements View.OnClickListener{
         }
         public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
                                    long arg3) {
+            moneyAndCode.setVisibility(View.GONE);
             if (isViewSpinner){
                 if (arg2==0){
                     recyclerView.setVisibility(View.VISIBLE);
                     columnChartView.setVisibility(View.GONE);
+                    allScn.setVisibility(View.GONE);
                 }else {
                     recyclerView.setVisibility(View.GONE);
                     columnChartView.setVisibility(View.VISIBLE);
+                    allScn.setVisibility(View.VISIBLE);
                 }
             }else {
                 if (arg2==0){
@@ -212,7 +229,9 @@ public class AllCodeFragment extends Fragment implements View.OnClickListener{
                 startActivity(new Intent(getActivity(), HistoryBuyActivity.class));
                 break;
             case R.id.two_code_add:
-                //startActivity(new Intent(getActivity(), CodeCameraActivity.class));
+                startActivity(new Intent(getActivity(), CodeCameraActivity.class));
+                break;
+            case R.id.all_scn:
                 startActivity(new Intent(getActivity(), BigHistoryActivity.class));
                 break;
         }
@@ -230,7 +249,7 @@ public class AllCodeFragment extends Fragment implements View.OnClickListener{
         //每个集合显示几条柱子
         int numSubColumns = 1;
         //显示多少个集合
-        List<CodeBean> mCodeBean= checkCodeListSize();
+        mCodeBean= checkCodeListSize();
         int numColumns =mCodeBean.size();
         //保存所有的柱子
         List<Column> columns = new ArrayList<>();
@@ -272,10 +291,15 @@ public class AllCodeFragment extends Fragment implements View.OnClickListener{
         columnChartView.setOnValueTouchListener(new ColumnChartOnValueSelectListener() {
             @Override
             public void onValueSelected(int i, int i1, SubcolumnValue subcolumnValue) {
-                Toast.makeText(getActivity(), codeBeanList.get(i).getCode()+"--->"+codeBeanList.get(i).getMoney(), Toast.LENGTH_SHORT).show();
+                moneyAndCode.setVisibility(View.VISIBLE);
+                money.setText(mCodeBean.get(i).getMoney()+"块");
+                code.setText(mCodeBean.get(i).getCode()+"号");
+                //Toast.makeText(getActivity(), codeBeanList.get(i).getCode()+"--->"+codeBeanList.get(i).getMoney(), Toast.LENGTH_SHORT).show();
             }
             @Override
-            public void onValueDeselected() {}
+            public void onValueDeselected() {
+                moneyAndCode.setVisibility(View.GONE);
+            }
         });
         columnChartView.setInteractive(true);//设置图表是否可以与用户互动
         columnChartView.setValueSelectionEnabled(true);//设置图表数据是否选中进行显示

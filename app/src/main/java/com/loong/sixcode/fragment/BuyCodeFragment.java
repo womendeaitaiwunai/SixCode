@@ -16,8 +16,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -40,6 +43,7 @@ import com.loong.sixcode.view.SureBuyDialog;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -52,7 +56,8 @@ public class BuyCodeFragment extends BaseFragment implements View.OnClickListene
     private BuyResultAdapter buyResultAdapter;
     private BuySomeAdapter buySomeAdapter;
     private LinearLayout nextView;
-    private boolean isSingle=true;
+    private boolean isSingle=false;
+    private int BuyType=1;
 
     @Nullable
     @Override
@@ -73,6 +78,7 @@ public class BuyCodeFragment extends BaseFragment implements View.OnClickListene
         RadioGroup radioGroup= (RadioGroup) view.findViewById(R.id.select_group);
         nextView= (LinearLayout) view.findViewById(R.id.next_view);
         someRecycle= (RecyclerView) nextView.findViewById(R.id.some_select_recycle);
+        Spinner dataType= (Spinner) view.findViewById(R.id.data_type);
         nextView.findViewById(R.id.some_sure).setOnClickListener(this);
         nextView.findViewById(R.id.some_canal).setOnClickListener(this);
         view.findViewById(R.id.first_show).setOnClickListener(this);
@@ -86,6 +92,27 @@ public class BuyCodeFragment extends BaseFragment implements View.OnClickListene
                 else nextView.setVisibility(View.VISIBLE);
             }
         });
+
+        List<String> dataTypeData=new ArrayList<>();
+        dataTypeData.add("按号码排序");
+        dataTypeData.add("按金额排序");
+        ArrayAdapter dataAdapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_spinner_item,dataTypeData);
+        //设置下拉列表的风格
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //将adapter 添加到spinner中
+        dataType.setAdapter(dataAdapter);
+        //添加事件Spinner事件监听
+        dataType.setOnItemSelectedListener(new SpinnerSelectedListener());
+        //设置默认值
+        dataType.setVisibility(View.VISIBLE);
+    }
+
+    class SpinnerSelectedListener implements AdapterView.OnItemSelectedListener {
+        public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
+                                   long arg3) {
+
+        }
+        public void onNothingSelected(AdapterView<?> arg0) {}
     }
 
     private void initData() {

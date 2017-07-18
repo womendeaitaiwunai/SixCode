@@ -25,7 +25,7 @@ import okhttp3.MediaType;
  * Created by lxl on 2017/3/4.
  */
 
-public class PixelOkHttpUtil<T, V> {
+public class MyOkHttpUtil<T, V> {
     private T requestBean;
     private V responseBeam;
 

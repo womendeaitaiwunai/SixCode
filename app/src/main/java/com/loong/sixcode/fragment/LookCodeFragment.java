@@ -62,7 +62,7 @@ public class LookCodeFragment extends Fragment implements View.OnClickListener{
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.one:
-                showMenu(new HistoryCodeFragment());
+                showMenu(new AnimalFragment());
                 break;
             case R.id.two:
                 showMenu(new HistoryCodeFragment());

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<animals>
+    <!--鸡 猴 羊 马 蛇 龙 兔 虎 牛 鼠 猪 狗-->
+    <animal>
+        <name>鸡</name>
+        <code>01、13、25、37、49</code>
+        <no>1</no>
+    </animal>
+
+    <animal>
+        <name>猴</name>
+        <code>02、14、26、38</code>
+        <no>2</no>
+    </animal>
+
+    <animal>
+        <name>羊</name>
+        <code>03、15、27、39</code>
+        <no>3</no>
+    </animal>
+
+
+    <animal>
+        <name>马</name>
+        <code>04、16、28、40</code>
+        <no>4</no>
+    </animal>
+
+
+    <animal>
+        <name>蛇</name>
+        <code>05、17、29、41</code>
+        <no>5</no>
+    </animal>
+
+
+    <animal>
+        <name>龙</name>
+        <code>06、18、30、42</code>
+        <no>6</no>
+    </animal>
+
+    <animal>
+        <name>兔</name>
+        <code>07、19、31、43</code>
+        <no>7</no>
+    </animal>
+
+    <animal>
+        <name>虎</name>
+        <code>08、20、32、44</code>
+        <no>8</no>
+    </animal>
+
+    <animal>
+        <name>牛</name>
+        <code>09、21、33、45</code>
+        <no>9</no>
+    </animal>
+
+
+    <animal>
+        <name>鼠</name>
+        <code>10、22、34、46</code>
+        <no>10</no>
+    </animal>
+
+
+    <animal>
+        <name>猪</name>
+        <code>11、23、35、47</code>
+        <no>11</no>
+    </animal>
+
+
+    <animal>
+        <name>狗</name>
+        <code>12、24、36、48</code>
+        <no>12</no>
+    </animal>
+</animals>

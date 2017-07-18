@@ -4,25 +4,20 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.loong.sixcode.R;
-import com.loong.sixcode.adapter.BuyResultAdapter;
 import com.loong.sixcode.adapter.HistoryCodeAdapter;
 import com.loong.sixcode.base.BaseApplication;
 import com.loong.sixcode.base.BaseFragment;
 import com.loong.sixcode.bean.AllHistoryBean;
-import com.loong.sixcode.bean.AllHistoryBeanDao;
 import com.loong.sixcode.bean.HistoryCodeBean;
 import com.loong.sixcode.common.WebUrl;
 import com.loong.sixcode.greendao.HistoryCodeDao;
-import com.loong.sixcode.util.okhttp.PixelOkHttpUtil;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 

@@ -16,9 +16,11 @@ import java.util.List;
  */
 
 public class CodeAdapter extends BaseRecycleAdapter<CodeAdapter.MViewHolder,Integer> {
-        public CodeAdapter(List<Integer> mineDataList) {
+
+    public CodeAdapter(List<Integer> mineDataList) {
         super(mineDataList);
     }
+
     @Override
     protected MViewHolder getViewHolder(ViewGroup parent) {
         View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_code,null);

@@ -69,20 +69,22 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:visibility="gone"
                 android:layout_weight="1">
                 <RadioButton
                     android:id="@+id/single"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:checked="true"
                     android:text="单买"/>
                 <RadioButton
                     android:id="@+id/some"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:checked="true"
                     android:text="多买"/>
             </RadioGroup>
             <Spinner
+                android:id="@+id/data_type"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"/>
@@ -92,7 +94,6 @@
             android:id="@+id/next_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
             android:orientation="vertical">
             <TextView
                 android:layout_width="match_parent"

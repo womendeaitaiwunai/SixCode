@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -25,15 +26,23 @@ import android.widget.Toast;
 
 import com.loong.sixcode.activity.PowerManageActivity;
 import com.loong.sixcode.base.BaseActivity;
+import com.loong.sixcode.base.BaseApplication;
+import com.loong.sixcode.bean.AnimalBean;
+import com.loong.sixcode.bean.LineBean;
+import com.loong.sixcode.bean.WaveBean;
 import com.loong.sixcode.fragment.AllCodeFragment;
 import com.loong.sixcode.fragment.BuyCodeFragment;
 import com.loong.sixcode.fragment.LookCodeFragment;
 import com.loong.sixcode.fragment.SearchCodeFragment;
 import com.loong.sixcode.service.ClipBoardService;
 import com.loong.sixcode.service.FloatingWindowService;
+import com.loong.sixcode.util.parser.AnimalParser;
+import com.loong.sixcode.util.parser.LineParser;
+import com.loong.sixcode.util.parser.WaveParser;
 import com.loong.sixcode.view.NoScrollViewPager;
 import com.loong.sixcode.view.Sneaker;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -123,11 +132,62 @@ public class MainActivity extends BaseActivity
         }, android.Manifest.permission.SYSTEM_ALERT_WINDOW,
                 android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 android.Manifest.permission.READ_EXTERNAL_STORAGE);
+
+        if (BaseApplication.getDaoInstant().getAnimalBeanDao().count()
+                +BaseApplication.getDaoInstant().getWaveBeanDao().count()
+                +BaseApplication.getDaoInstant().getLineBeanDao().count()==0){
+            showProgressDialog("正在初始化数据...");
+            new CheckData().execute();
+        }
     }
+
+
     public void addCodeData(){
         allCodeFragment.addData();
     }
 
+    public class CheckData extends AsyncTask<Void,Void,Boolean>{
+        @Override
+        protected Boolean doInBackground(Void[] params) {
+            if (BaseApplication.getDaoInstant().getAnimalBeanDao().count()==0){
+                try {
+                    InputStream is = getAssets().open("animal.xml");
+                    List<AnimalBean> animalBeanList= AnimalParser.parse(is);
+                    for (AnimalBean animalBean:animalBeanList)
+                        BaseApplication.getDaoInstant().getAnimalBeanDao().insert(animalBean);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+            if (BaseApplication.getDaoInstant().getWaveBeanDao().count()==0){
+                try {
+                    InputStream is = getAssets().open("wave.xml");
+                    List<WaveBean> animalBeanList= WaveParser.parse(is);
+                    for (WaveBean animalBean:animalBeanList)
+                        BaseApplication.getDaoInstant().getWaveBeanDao().insert(animalBean);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+            if (BaseApplication.getDaoInstant().getLineBeanDao().count()==0){
+                try {
+                    InputStream is = getAssets().open("five_line.xml");
+                    List<LineBean> animalBeanList= LineParser.parse(is);
+                    for (LineBean animalBean:animalBeanList)
+                        BaseApplication.getDaoInstant().getLineBeanDao().insert(animalBean);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            hideProgressDialog();
+        }
+    }
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         tabLayout.saveState(outState);
@@ -136,13 +196,10 @@ public class MainActivity extends BaseActivity
 
     private class MFragmentAdapter extends FragmentPagerAdapter{
         private List<Fragment> fragmentList=new ArrayList<>();
-
-        public MFragmentAdapter(FragmentManager fm,List<Fragment> fragmentList) {
+        MFragmentAdapter(FragmentManager fm,List<Fragment> fragmentList) {
             super(fm);
             this.fragmentList=fragmentList;
         }
-
-
         @Override
         public Fragment getItem(int position) {
             return fragmentList.get(position);

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<waves>
+    <!--红  蓝  绿-->
+    <wave>
+        <name>红</name>
+        <code>1、2、7、8、12、13、18、19、23、24、29、30、34、35、40、45、46</code>
+        <no>1</no>
+    </wave>
+
+    <wave>
+        <name>蓝</name>
+        <code>3、4、9、10、14、15、20、25、26、31、36、37、41、42、47、48</code>
+        <no>2</no>
+    </wave>
+
+    <wave>
+        <name>绿</name>
+        <code>5、6、11、16、17、21、22、27、28、32、33、38、39、43、44、49</code>
+        <no>3</no>
+    </wave>
+
+</waves>
