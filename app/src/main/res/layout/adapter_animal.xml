@@ -23,7 +23,7 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/white"
             android:padding="6dp"
             android:background="@drawable/line_bg"/>
     </LinearLayout>

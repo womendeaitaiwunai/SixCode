@@ -54,6 +54,7 @@ public class HistoryCodeAdapter extends BaseRecycleAdapter<HistoryCodeAdapter.MV
         holder.sevenCodeValue.setText(sxs[6]);
         String timeAndNo=itemsBean.getPeriod();
         holder.codeNo.setText(timeAndNo.substring(timeAndNo.length()-4,timeAndNo.length()));
+        holder.time.setText(timeAndNo.substring(0,timeAndNo.length()-4));
     }
 
     public class MViewHolder extends RecyclerView.ViewHolder{
@@ -72,6 +73,7 @@ public class HistoryCodeAdapter extends BaseRecycleAdapter<HistoryCodeAdapter.MV
         private SuperTextView sevenCode;
         private TextView sevenCodeValue;
         private TextView codeNo;
+        private TextView time;
         public MViewHolder(View view) {
             super(view);
             oneCode = (SuperTextView) view.findViewById(R.id.one_code);
@@ -89,6 +91,7 @@ public class HistoryCodeAdapter extends BaseRecycleAdapter<HistoryCodeAdapter.MV
             sevenCode = (SuperTextView) view.findViewById(R.id.seven_code);
             sevenCodeValue = (TextView) view.findViewById(R.id.seven_code_value);
             codeNo = (TextView) view.findViewById(R.id.code_no);
+            time = (TextView) view.findViewById(R.id.my_time);
         }
     }
 }

@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
     <TextView
         android:layout_width="match_parent"
@@ -8,4 +10,34 @@
         android:padding="10dp"
         android:gravity="center"
         android:text="查询"/>
+
+    <com.imangazaliev.circlemenu.CircleMenu
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/circleMenu">
+
+    <com.imangazaliev.circlemenu.CircleMenuButton
+        android:id="@+id/favorite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:colorNormal="#2196F3"
+        app:colorPressed="#1E88E5"
+        app:icon="@mipmap/item1" />
+
+    <com.imangazaliev.circlemenu.CircleMenuButton
+        android:id="@+id/search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:colorNormal="#4CAF50"
+        app:colorPressed="#43A047"
+        app:icon="@mipmap/item2" />
+
+    <com.imangazaliev.circlemenu.CircleMenuButton
+        android:id="@+id/alert"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:colorNormal="#F44336"
+        app:colorPressed="#E53935"
+        app:icon="@mipmap/item3" />
+    </com.imangazaliev.circlemenu.CircleMenu>
 </LinearLayout>

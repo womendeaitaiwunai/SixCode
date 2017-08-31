@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -44,7 +46,9 @@ import com.loong.sixcode.view.Sneaker;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import eu.long1.spacetablayout.SpaceTabLayout;
 
@@ -121,17 +125,17 @@ public class MainActivity extends BaseActivity
         filter.addAction("com.loong.sixcode.service.ClipBoardReceiver");
         registerReceiver(mBoardReceiver, filter);
 
-        performCodeWithPermission("设置相应的权限", new PermissionCallback() {
-            @Override
-            public void hasPermission() {}
-            @Override
-            public void noPermission() {
-                showToast("没有相应的权限");
-                finish();
-            }
-        }, android.Manifest.permission.SYSTEM_ALERT_WINDOW,
-                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                android.Manifest.permission.READ_EXTERNAL_STORAGE);
+//        performCodeWithPermission("设置相应的权限", new PermissionCallback() {
+//            @Override
+//            public void hasPermission() {}
+//            @Override
+//            public void noPermission() {
+//                showToast("没有相应的权限");
+//                finish();
+//            }
+//        }, android.Manifest.permission.SYSTEM_ALERT_WINDOW,
+//                android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+//                android.Manifest.permission.READ_EXTERNAL_STORAGE);
 
         if (BaseApplication.getDaoInstant().getAnimalBeanDao().count()
                 +BaseApplication.getDaoInstant().getWaveBeanDao().count()
@@ -139,6 +143,7 @@ public class MainActivity extends BaseActivity
             showProgressDialog("正在初始化数据...");
             new CheckData().execute();
         }
+
     }
 
 

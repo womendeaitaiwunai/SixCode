@@ -73,7 +73,7 @@ public class MyOkHttpUtil<T, V> {
         RequestCall requestCall = postFormBuilder.build();
         requestCall.connTimeOut(30000);
         try {
-            requestCall.execute(new HttpCallBack(requestBean, backInterface));
+            requestCall.execute(new HttpCallBack<>(responseBeam, backInterface));
         } catch (Exception e) {
             e.printStackTrace();
             requestCall.cancel();
@@ -153,7 +153,7 @@ public class MyOkHttpUtil<T, V> {
         if (url.startsWith("http://") || url.startsWith("https://")) {
             return url;
         } else {
-            return "https://" + url;
+            return "http://" + url;
         }
     }
 }
